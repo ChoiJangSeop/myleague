@@ -1,8 +1,11 @@
 package jangseop.myleague.domain;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class HeadCoach {
 
     @Id
@@ -12,7 +15,14 @@ public class HeadCoach {
 
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
+
+    //== 연관관계 편의 메서드 ==//
+
+    public void setTeam(Team team) {
+        this.team = team;
+        team.setHeadCoach(this);
+    }
 }
