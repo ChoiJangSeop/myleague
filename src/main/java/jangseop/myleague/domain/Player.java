@@ -24,12 +24,29 @@ public class Player {
 
     private int stat;
 
-    //
+    //== 비지니스 메서드 ==//
+
+    /**
+     * 생성 메서드
+     */
+    public static Player createPlayer(String name, Position position, int stat) {
+        Player player = new Player();
+        player.name = name;
+        player.position = position;
+        player.stat = stat;
+        player.team = null;
+        return player;
+    }
+
 
     // 사용금지
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    public void setStat(int stat) { this.stat = stat; }
+
+    public void setPosition(Position position) { this.position = position; }
 
 
 }
