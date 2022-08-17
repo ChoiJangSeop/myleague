@@ -19,6 +19,15 @@ public class HeadCoach {
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
+
+    //== 생성 메서드 ==//
+    public static HeadCoach createHeadCoach(String name) {
+        HeadCoach headCoach = new HeadCoach();
+        headCoach.name = name;
+        headCoach.team = null;
+        return headCoach;
+    }
+
     //== 연관관계 편의 메서드 ==//
 
     public void setTeam(Team team) {
