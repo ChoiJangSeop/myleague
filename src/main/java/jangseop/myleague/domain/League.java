@@ -24,7 +24,7 @@ public class League {
     @OneToMany(mappedBy = "league")
     private List<Participant> participants = new ArrayList<>();
 
-    @Embedded
-    private Method method;
+//    @Embedded
+//    private Method method;
 
 }
