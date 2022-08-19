@@ -1,14 +1,17 @@
 package jangseop.myleague.repository;
 
-import jangseop.myleague.domain.Player;
-import jangseop.myleague.domain.Position;
-import jangseop.myleague.domain.Team;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jangseop.myleague.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class PlayerRepository {
@@ -46,8 +49,29 @@ public class PlayerRepository {
                 .getResultList();
     }
 
-    public List<Player> findAll() {
-        return em.createQuery("select p from Player p", Player.class)
-                .getResultList();
+    public List<Player> findAll(PlayerSearch playerSearch) {
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QPlayer player = QPlayer.player;
+        QTeam team = QTeam.team;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if (StringUtils.hasText(playerSearch.getName())) {
+            builder.and(player.name.contains(playerSearch.getName()));
+        }
+
+        if (playerSearch.getTeam() != null) {
+            builder.and(player.team.id.eq(playerSearch.getTeam().getId()));
+        }
+
+        if (playerSearch.getPosition() != null) {
+            builder.and(player.position.eq(playerSearch.getPosition()));
+        }
+        // TODO PlayerRepo. 선수 검색 동적 쿼리 작성
+        return queryFactory.selectFrom(player)
+                .leftJoin(team)
+                .on(builder)
+                .fetch();
     }
 }

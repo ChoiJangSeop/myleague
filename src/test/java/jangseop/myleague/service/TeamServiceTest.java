@@ -48,23 +48,4 @@ class TeamServiceTest {
             teamService.create("team", 19);
         });
     }
-/*
-    @Test
-    public void 팀선수중복검증() throws Exception {
-        // given
-        HeadCoach headCoach1 = new HeadCoach();
-        HeadCoach headCoach2 = new HeadCoach();
-        Player player1 = new Player();
-        Player player2 = new Player();
-
-        // when
-        teamService.create("team1", 20, headCoach1, player1);
-
-        // then
-        assertThrows(IllegalStateException.class, () -> {
-            teamService.create("team2", 20, headCoach2, player1, player2);
-        });
-    }
-
- */
 }
