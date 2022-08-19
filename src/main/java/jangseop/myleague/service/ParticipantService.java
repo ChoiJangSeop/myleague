@@ -2,6 +2,7 @@ package jangseop.myleague.service;
 
 import jangseop.myleague.domain.League;
 import jangseop.myleague.domain.Participant;
+import jangseop.myleague.domain.ParticipantSearch;
 import jangseop.myleague.domain.Team;
 import jangseop.myleague.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +44,7 @@ public class ParticipantService {
     /**
      * TODO 참가팀 검색 (대회,팀) 동적쿼리
      */
-
-
-
-
-
+    public List<Participant> searchParticipants(Team team, League league) {
+        return participantRepository.findAll(new ParticipantSearch(team, league));
+    }
 }

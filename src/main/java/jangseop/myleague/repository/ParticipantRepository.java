@@ -1,8 +1,8 @@
 package jangseop.myleague.repository;
 
-import jangseop.myleague.domain.League;
-import jangseop.myleague.domain.Participant;
-import jangseop.myleague.domain.Team;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jangseop.myleague.domain.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -34,5 +34,29 @@ public class ParticipantRepository {
         return em.createQuery("select p from Participant p where p.league = :league", Participant.class)
                 .setParameter("league", league)
                 .getResultList();
+    }
+
+    public List<Participant> findAll(ParticipantSearch participantSearch) {
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QParticipant participant = QParticipant.participant;
+        QTeam team = QTeam.team;
+        QLeague league = QLeague.league;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (participantSearch.getTeam() != null) {
+            builder.and(team.id.eq(participantSearch.getTeam().getId()));
+        }
+
+        if (participantSearch.getLeague() != null) {
+            builder.and(league.id.eq(participantSearch.getLeague().getId()));
+        }
+
+        List<Participant> participants = queryFactory.selectFrom(participant)
+                .where(builder)
+                .fetch();
+        return participants;
     }
 }

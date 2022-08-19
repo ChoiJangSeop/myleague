@@ -1,17 +1,14 @@
 package jangseop.myleague.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jangseop.myleague.domain.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class PlayerRepository {
@@ -37,18 +34,6 @@ public class PlayerRepository {
         return findPlayer.get(0);
     }
 
-    public List<Player> findByPosition(Position position) {
-        return em.createQuery("select p from Player p where p.position = :position", Player.class)
-                .setParameter("position", position)
-                .getResultList();
-    }
-
-    public List<Player> findByTeam(Team team) {
-        return em.createQuery("select p from Player p where p.team = :team", Player.class)
-                .setParameter("team", team)
-                .getResultList();
-    }
-
     public List<Player> findAll(PlayerSearch playerSearch) {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
@@ -68,7 +53,7 @@ public class PlayerRepository {
         if (playerSearch.getPosition() != null) {
             builder.and(player.position.eq(playerSearch.getPosition()));
         }
-        // TODO PlayerRepo. 선수 검색 동적 쿼리 작성
+
         return queryFactory.selectFrom(player)
                 .leftJoin(team)
                 .on(builder)
