@@ -31,19 +31,12 @@ public class Team {
 
     private int teamStat;
 
-    //== business logic ==//
+    //== 생성 메서드 ==//
 
-    public static Team createTeam(String name, int teamStat, HeadCoach headCoach, Player...players) {
+    public static Team createTeam(String name, int teamStat) {
         Team team = new Team();
         team.name = name;
         team.teamStat = teamStat;
-
-        headCoach.setTeam(team);
-
-        for (Player player : players) {
-            team.players.add(player);
-            player.setTeam(team);
-        }
 
         return team;
     }

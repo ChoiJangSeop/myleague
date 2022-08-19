@@ -23,9 +23,9 @@ public class TeamService {
      * 팀 생성
      */
     @Transactional
-    public Long create(String name, int teamStat, HeadCoach headCoach, Player ...players) {
-        validateCreateTeam(name, headCoach, players);
-        Team team = Team.createTeam(name, teamStat, headCoach, players);
+    public Long create(String name, int teamStat) {
+        validateCreateTeam(name);
+        Team team = Team.createTeam(name, teamStat);
         return teamRepository.save(team);
     }
 
@@ -34,7 +34,7 @@ public class TeamService {
      * 1. 팀 이름 중복 금지
      * 2. 선수/감독 이중등록 금지
      */
-    public void validateCreateTeam(String name, HeadCoach headCoach, Player ...players) {
+    public void validateCreateTeam(String name) {
         List<Team> findTeams = teamRepository.findAll();
 
         // duplicate name
@@ -43,16 +43,16 @@ public class TeamService {
                 throw new IllegalStateException("이미 동일한 이름의 팀이 존재합니다");
             }
         }
-
-        if (headCoach.getTeam() != null) {
-            throw new IllegalStateException("이미 다른 팀에 소속된 감독입니다");
-        }
-
-        for (Player player : players) {
-            if (player.getTeam() != null) {
-                throw new IllegalStateException("이미 다른 팀에 소속된 선수입니다");
-            }
-        }
+//
+//        if (headCoach.getTeam() != null) {
+//            throw new IllegalStateException("이미 다른 팀에 소속된 감독입니다");
+//        }
+//
+//        for (Player player : players) {
+//            if (player.getTeam() != null) {
+//                throw new IllegalStateException("이미 다른 팀에 소속된 선수입니다");
+//            }
+//        }
     }
 
 

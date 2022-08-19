@@ -28,9 +28,7 @@ class TeamServiceTest {
     @Test
     public void 팀생성() throws Exception {
         // given
-        HeadCoach headCoach = new HeadCoach();
-        Player player = new Player();
-        Long id = teamService.create("Afreeca Freecs", 10, headCoach, player);
+        Long id = teamService.create("Afreeca Freecs", 10);
 
         // when
         Team findTeam = teamService.findTeam(id);
@@ -42,20 +40,15 @@ class TeamServiceTest {
     @Test()
     public void 팀이름중복검증() throws Exception {
         // given
-        HeadCoach headCoachA = new HeadCoach();
-        HeadCoach headCoachB = new HeadCoach();
-        Player playerA = new Player();
-        Player playerB = new Player();
-
         // when
-        teamService.create("team", 19, headCoachA, playerA);
+        teamService.create("team", 19);
 
         // then
         org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class, () -> {
-            teamService.create("team", 19, headCoachB, playerB);
+            teamService.create("team", 19);
         });
     }
-
+/*
     @Test
     public void 팀선수중복검증() throws Exception {
         // given
@@ -72,4 +65,6 @@ class TeamServiceTest {
             teamService.create("team2", 20, headCoach2, player1, player2);
         });
     }
+
+ */
 }

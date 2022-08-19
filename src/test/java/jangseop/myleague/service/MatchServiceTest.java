@@ -31,14 +31,21 @@ class MatchServiceTest {
         // given
         League LCK = new League();
 
+        Team DK = Team.createTeam("DWG KIA", 15);
+        Team AF = Team.createTeam("Afreeca Freecs", 16);
+
         HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
+        oktop.setTeam(AF);
+
         HeadCoach daney = HeadCoach.createHeadCoach("Daney");
+        daney.setTeam(DK);
+
 
         Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
         Player nuguri = Player.createPlayer("nuguri", Position.TOP, 16);
 
-        Team DK = Team.createTeam("DWG KIA", 15, daney, nuguri);
-        Team AF = Team.createTeam("Afreeca Freecs", 16, oktop, kiin);
+        kiin.setTeam(AF);
+        daney.setTeam(DK);
 
         teamRepository.save(DK);
         teamRepository.save(AF);
@@ -60,10 +67,13 @@ class MatchServiceTest {
         League LCK = new League();
         League LPL = new League();
 
+        Team AF = Team.createTeam("Afreeca Freecs", 16);
+        teamRepository.save(AF);
+
         HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
         Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
-        Team AF = Team.createTeam("Afreeca Freecs", 16, oktop, kiin);
-        teamRepository.save(AF);
+        oktop.setTeam(AF);
+        kiin.setTeam(AF);
 
         Participant lck_af = participantService.create(AF, LCK);
         Participant lpl_af = participantService.create(AF, LPL);
@@ -82,14 +92,20 @@ class MatchServiceTest {
         League LCK = new League();
         League LPL = new League();
 
+
+        Team AF = Team.createTeam("Afreeca Freecs", 16);
+        Team RNG = Team.createTeam("Royal Never Giveup", 13);
+
         HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
         HeadCoach uzi = HeadCoach.createHeadCoach("Uzi");
+        oktop.setTeam(AF);
+        uzi.setTeam(RNG);
 
         Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
         Player ming = Player.createPlayer("ming", Position.TOP, 10);
+        kiin.setTeam(AF);
+        ming.setTeam(RNG);
 
-        Team AF = Team.createTeam("Afreeca Freecs", 16, oktop, kiin);
-        Team RNG = Team.createTeam("Royal Never Giveup", 13, uzi, ming);
 
         // when
         Participant af_lck = participantService.create(AF, LCK);
@@ -106,14 +122,8 @@ class MatchServiceTest {
         // given
         League LCK = new League();
 
-        HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
-        HeadCoach daney = HeadCoach.createHeadCoach("Daney");
-
-        Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
-        Player nuguri = Player.createPlayer("nuguri", Position.TOP, 16);
-
-        Team DK = Team.createTeam("DWG KIA", 15, daney, nuguri);
-        Team AF = Team.createTeam("Afreeca Freecs", 16, oktop, kiin);
+        Team DK = Team.createTeam("DWG KIA", 15);
+        Team AF = Team.createTeam("Afreeca Freecs", 16);
 
         Participant af_lck = participantService.create(AF, LCK);
         Participant dk_lck = participantService.create(DK, LCK);

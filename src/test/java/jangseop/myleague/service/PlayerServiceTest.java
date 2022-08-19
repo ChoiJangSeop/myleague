@@ -21,6 +21,7 @@ class PlayerServiceTest {
 
     @Autowired private PlayerService playerService;
     @Autowired private PlayerRepository playerRepository;
+    @Autowired private TeamService teamService;
 
     @Test
     public void 선수생성() throws Exception {
@@ -45,5 +46,14 @@ class PlayerServiceTest {
         org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class, () -> {
             playerService.create("Kiin", Position.JGL, 15);
         });
+    }
+
+    @Test
+    public void 선수검색() throws Exception {
+        // given
+
+        // when
+
+        // then
     }
 }

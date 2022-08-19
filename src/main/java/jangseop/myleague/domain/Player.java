@@ -39,9 +39,12 @@ public class Player {
     }
 
 
-    // 사용금지
     public void setTeam(Team team) {
+        if (this.team != null) {
+            this.team.getPlayers().remove(this);
+        }
         this.team = team;
+        team.getPlayers().add(this);
     }
 
     public void setStat(int stat) { this.stat = stat; }

@@ -31,6 +31,10 @@ public class HeadCoach {
     //== 연관관계 편의 메서드 ==//
 
     public void setTeam(Team team) {
+        if (this.team != null) {
+            this.team.setHeadCoach(null);
+        }
+
         this.team = team;
         team.setHeadCoach(this);
     }
