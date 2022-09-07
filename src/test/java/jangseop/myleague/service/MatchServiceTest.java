@@ -12,6 +12,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class MatchServiceTest {
+
+    @PersistenceContext EntityManager em;
 
     @Autowired private MatchService matchService;
     @Autowired private ParticipantService participantService;
@@ -30,9 +35,14 @@ class MatchServiceTest {
     public void 경기생성() throws Exception {
         // given
         League LCK = new League();
+        em.persist(LCK);
 
         Team DK = Team.createTeam("DWG KIA", 15);
         Team AF = Team.createTeam("Afreeca Freecs", 16);
+
+        em.persist(DK);
+        em.persist(AF);
+
 
         HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
         oktop.setTeam(AF);
@@ -50,11 +60,12 @@ class MatchServiceTest {
         teamRepository.save(DK);
         teamRepository.save(AF);
 
-        Participant lck_af = participantService.create(AF, LCK);
-        Participant lck_dk = participantService.create(DK, LCK);
+        Participant lck_af = participantService.create(AF.getId(), LCK.getId());
+        Participant lck_dk = participantService.create(DK.getId(), LCK.getId());
+
 
         // when
-        Match match = matchService.create(null, lck_af, lck_dk);
+        Match match = matchService.create(null, lck_af.getId(), lck_dk.getId());
         Match findMatch = matchRepository.findOne(match.getId());
 
         // then
@@ -67,6 +78,9 @@ class MatchServiceTest {
         League LCK = new League();
         League LPL = new League();
 
+        em.persist(LCK);
+        em.persist(LPL);
+
         Team AF = Team.createTeam("Afreeca Freecs", 16);
         teamRepository.save(AF);
 
@@ -75,14 +89,14 @@ class MatchServiceTest {
         oktop.setTeam(AF);
         kiin.setTeam(AF);
 
-        Participant lck_af = participantService.create(AF, LCK);
-        Participant lpl_af = participantService.create(AF, LPL);
+        Participant lck_af = participantService.create(AF.getId(), LCK.getId());
+        Participant lpl_af = participantService.create(AF.getId(), LPL.getId());
 
         // when
 
         // then
         assertThrows(IllegalStateException.class, () -> {
-            matchService.create(null, lck_af, lpl_af);
+            matchService.create(null, lck_af.getId(), lpl_af.getId());
         });
     }
 
@@ -92,9 +106,12 @@ class MatchServiceTest {
         League LCK = new League();
         League LPL = new League();
 
-
+        em.persist(LCK);
+        em.persist(LPL);
         Team AF = Team.createTeam("Afreeca Freecs", 16);
         Team RNG = Team.createTeam("Royal Never Giveup", 13);
+        em.persist(AF);
+        em.persist(RNG);
 
         HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
         HeadCoach uzi = HeadCoach.createHeadCoach("Uzi");
@@ -108,12 +125,12 @@ class MatchServiceTest {
 
 
         // when
-        Participant af_lck = participantService.create(AF, LCK);
-        Participant rng_lpl = participantService.create(RNG, LPL);
+        Participant af_lck = participantService.create(AF.getId(), LCK.getId());
+        Participant rng_lpl = participantService.create(RNG.getId(), LPL.getId());
 
         // then
         assertThrows(IllegalStateException.class, () -> {
-            matchService.create(null, af_lck, rng_lpl);
+            matchService.create(null, af_lck.getId(), rng_lpl.getId());
         });
     }
     
@@ -121,14 +138,18 @@ class MatchServiceTest {
     public void 경기결과업데이트() throws Exception {
         // given
         League LCK = new League();
+        em.persist(LCK);
 
         Team DK = Team.createTeam("DWG KIA", 15);
         Team AF = Team.createTeam("Afreeca Freecs", 16);
 
-        Participant af_lck = participantService.create(AF, LCK);
-        Participant dk_lck = participantService.create(DK, LCK);
+        em.persist(DK);
+        em.persist(AF);
 
-        Match match = matchService.create(null, af_lck, dk_lck);
+        Participant af_lck = participantService.create(AF.getId(), LCK.getId());
+        Participant dk_lck = participantService.create(DK.getId(), LCK.getId());
+
+        Match match = matchService.create(null, af_lck.getId(), dk_lck.getId());
 
         // when
         match.matchTeams(0, 2);

@@ -40,7 +40,6 @@ public class PlayerService {
     /**
      * 선수 조회 (동적쿼리)
      */
-    // TODO 선수 조회 메서드 : 동적 쿼리로 구현
     public List<Player> findPlayer(String name, Team team, Position position) {
         return playerRepository.findAll(new PlayerSearch(name, team, position));
     }

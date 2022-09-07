@@ -3,6 +3,7 @@ package jangseop.myleague.service;
 import jangseop.myleague.domain.Match;
 import jangseop.myleague.domain.Participant;
 import jangseop.myleague.repository.MatchRepository;
+import jangseop.myleague.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,26 @@ import java.util.Date;
 public class MatchService {
 
     private final MatchRepository matchRepository;
+    private final ParticipantRepository participantRepository;
 
     /**
      * 경기 생성 및 저장
      */
-    public Match create(Date date, Participant home, Participant away) {
+    public Match create(Date date, Long homeId, Long awayId) {
 
+        // 엔티티 조회
+        Participant home = participantRepository.findOne(homeId);
+        Participant away = participantRepository.findOne(awayId);
+
+        // 경기 생성 검증
         validateCreateMatch(date, home, away);
+
+        // 경기 생성
         Match match = Match.createMatch(date, home, away);
+
+        // 경기 저장
         matchRepository.save(match);
+
         return match;
     }
 

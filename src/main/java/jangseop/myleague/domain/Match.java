@@ -43,7 +43,7 @@ public class Match {
         return match;
     }
 
-    //== 비지니스 메서드 ==//
+    //== 비지니스 로직 ==//
 
     /**
      * match

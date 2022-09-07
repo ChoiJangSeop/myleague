@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -22,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class ParticipantServiceTest {
 
+    @PersistenceContext EntityManager em;
+
     @Autowired private ParticipantService participantService;
     @Autowired private ParticipantRepository participantRepository;
 
@@ -30,7 +34,12 @@ class ParticipantServiceTest {
         // given
         Team GEN = Team.createTeam("gen.g", 20);
         League LCK = new League();
-        Participant gen_lck = participantService.create(GEN, LCK);
+
+        em.persist(GEN);
+        em.persist(LCK);
+
+        Participant gen_lck = participantService.create(GEN.getId(), LCK.getId());
+        participantRepository.save(gen_lck);
 
         // when
         Participant findParticipant = participantRepository.findOne(gen_lck.getId());
@@ -45,18 +54,21 @@ class ParticipantServiceTest {
         Team GEN = Team.createTeam("gen.g", 20);
         League LCK = new League();
         League Worlds = new League();
+        em.persist(GEN);
+        em.persist(LCK);
+        em.persist(Worlds);
 
         // when
-        Participant gen_lck = participantService.create(GEN, LCK);
+        Participant gen_lck = participantService.create(GEN.getId(), LCK.getId());
 
         // then
 
         // 다른 리그 참가
-        participantService.create(GEN, Worlds);
+        participantService.create(GEN.getId(), Worlds.getId());
 
         // 동일 리그 참가시 예외
         assertThrows(IllegalStateException.class, () -> {
-            participantService.create(GEN, LCK);
+            participantService.create(GEN.getId(), LCK.getId());
         });
     }
 
@@ -68,9 +80,14 @@ class ParticipantServiceTest {
         League LCK = new League();
         League Worlds = new League();
 
-        Participant gen_lck = participantService.create(GEN, LCK);
-        Participant gen_worlds = participantService.create(GEN, Worlds);
-        Participant c9_worlds = participantService.create(C9, Worlds);
+        em.persist(GEN);
+        em.persist(C9);
+        em.persist(LCK);
+        em.persist(Worlds);
+
+        Participant gen_lck = participantService.create(GEN.getId(), LCK.getId());
+        Participant gen_worlds = participantService.create(GEN.getId(), Worlds.getId());
+        Participant c9_worlds = participantService.create(C9.getId(), Worlds.getId());
 
         // when
         Participant findParticipant = participantService
