@@ -13,6 +13,7 @@ public class Match {
     @Column(name = "MATCH_ID")
     private Long id;
 
+    private int round;
     private Date matchDate;
 
     @ManyToOne
@@ -31,9 +32,11 @@ public class Match {
     /**
      * create Match
      */
-    public static Match createMatch(Date date, Participant home, Participant away) {
+    public static Match createMatch(Date date, int round, Participant home, Participant away) {
         Match match = new Match();
+
         match.matchDate = date;
+        match.round = round;
 
         match.home = home;
         match.away = away;
@@ -51,14 +54,27 @@ public class Match {
     public void matchTeams(int homeScore, int awayScore) {
 
         if (this.homeScore != -1 && this.awayScore != -1) {
-            this.home.getRecord().removeMatchResult(this.homeScore, this.awayScore);
-            this.away.getRecord().removeMatchResult(this.awayScore, this.homeScore);
+            this.home.removeMatchResult(this.homeScore, this.awayScore);
+            this.away.removeMatchResult(this.awayScore, this.homeScore);
         }
 
         this.homeScore = homeScore;
         this.awayScore = awayScore;
 
-        this.home.getRecord().addMatchResult(homeScore, awayScore);
-        this.away.getRecord().addMatchResult(awayScore, homeScore);
+        this.home.addMatchResult(homeScore, awayScore);
+        this.away.addMatchResult(awayScore, homeScore);
+    }
+
+    /**
+     * cancel match
+     */
+    public void cancelMatchTeams() {
+        if (this.homeScore != -1 && this.awayScore != -1) {
+            this.home.removeMatchResult(this.homeScore, this.awayScore);
+            this.away.removeMatchResult(this.awayScore, this.homeScore);
+        }
+
+        this.homeScore = -1;
+        this.awayScore = -1;
     }
 }

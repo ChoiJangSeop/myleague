@@ -21,6 +21,7 @@ public class Record {
     private int score = 0;
     private int rank = 1;
 
+
     //== 비즈니스 메서드 ==//
 
     /**
@@ -60,7 +61,14 @@ public class Record {
     }
 
     /**
+     * set rank
+     */
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    /**
      * TODO 점수 계산
      */
-
+    public void updateScore() {}
 }

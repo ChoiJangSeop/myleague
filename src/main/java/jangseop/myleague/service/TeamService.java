@@ -43,16 +43,6 @@ public class TeamService {
                 throw new IllegalStateException("이미 동일한 이름의 팀이 존재합니다");
             }
         }
-//
-//        if (headCoach.getTeam() != null) {
-//            throw new IllegalStateException("이미 다른 팀에 소속된 감독입니다");
-//        }
-//
-//        for (Player player : players) {
-//            if (player.getTeam() != null) {
-//                throw new IllegalStateException("이미 다른 팀에 소속된 선수입니다");
-//            }
-//        }
     }
 
 

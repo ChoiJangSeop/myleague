@@ -1,7 +1,6 @@
 package jangseop.myleague.domain;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -24,11 +23,8 @@ public class Player {
 
     private int stat;
 
-    //== 비지니스 메서드 ==//
+    // == 생성 메서드 ==//
 
-    /**
-     * 생성 메서드
-     */
     public static Player createPlayer(String name, Position position, int stat) {
         Player player = new Player();
         player.name = name;
@@ -39,16 +35,41 @@ public class Player {
     }
 
 
-    public void setTeam(Team team) {
+    //== 연관관계 편의 메서드 ==//
+
+
+    //== 비즈니스 로직 ==//
+
+    /**
+     * 팀 등록
+     */
+    public void registerTeam(Team team) {
         if (this.team != null) {
             this.team.getPlayers().remove(this);
         }
         this.team = team;
-        team.getPlayers().add(this);
+
+        if (team != null) {
+            team.getPlayers().add(this);
+        }
     }
 
+    /**
+     * 팀 해제
+     */
+    public void deregisterTeam() {
+        this.team.getPlayers().remove(this);
+        this.team = null;
+    }
+
+    /**
+     * 스탯 수정
+     */
     public void setStat(int stat) { this.stat = stat; }
 
+    /**
+     * 포지션 수정
+     */
     public void setPosition(Position position) { this.position = position; }
 
 

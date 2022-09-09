@@ -5,7 +5,6 @@ import jangseop.myleague.domain.PlayerSearch;
 import jangseop.myleague.domain.Position;
 import jangseop.myleague.domain.Team;
 import jangseop.myleague.repository.PlayerRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -59,7 +55,7 @@ class PlayerServiceTest {
         Player doran = playerService.create("doran", Position.TOP, 12);
 
         Team af = Team.createTeam("Afreeca Freecs", 12);
-        kiin.setTeam(af);
+        kiin.registerTeam(af);
 
         // when
         Player findPlayerByName = playerRepository

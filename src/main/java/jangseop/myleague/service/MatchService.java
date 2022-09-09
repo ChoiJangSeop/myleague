@@ -32,7 +32,7 @@ public class MatchService {
         validateCreateMatch(date, home, away);
 
         // 경기 생성
-        Match match = Match.createMatch(date, home, away);
+        Match match = Match.createMatch(date, 1, home, away);
 
         // 경기 저장
         matchRepository.save(match);

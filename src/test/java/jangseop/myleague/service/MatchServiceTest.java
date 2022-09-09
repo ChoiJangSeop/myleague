@@ -3,12 +3,10 @@ package jangseop.myleague.service;
 import jangseop.myleague.domain.*;
 import jangseop.myleague.repository.MatchRepository;
 import jangseop.myleague.repository.TeamRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +52,7 @@ class MatchServiceTest {
         Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
         Player nuguri = Player.createPlayer("nuguri", Position.TOP, 16);
 
-        kiin.setTeam(AF);
+        kiin.registerTeam(AF);
         daney.setTeam(DK);
 
         teamRepository.save(DK);
@@ -87,7 +85,7 @@ class MatchServiceTest {
         HeadCoach oktop = HeadCoach.createHeadCoach("oktop");
         Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
         oktop.setTeam(AF);
-        kiin.setTeam(AF);
+        kiin.registerTeam(AF);
 
         Participant lck_af = participantService.create(AF.getId(), LCK.getId());
         Participant lpl_af = participantService.create(AF.getId(), LPL.getId());
@@ -120,8 +118,8 @@ class MatchServiceTest {
 
         Player kiin = Player.createPlayer("kiin", Position.TOP, 15);
         Player ming = Player.createPlayer("ming", Position.TOP, 10);
-        kiin.setTeam(AF);
-        ming.setTeam(RNG);
+        kiin.registerTeam(AF);
+        ming.registerTeam(RNG);
 
 
         // when

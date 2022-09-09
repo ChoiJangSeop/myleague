@@ -1,7 +1,6 @@
 package jangseop.myleague.domain;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class Team {
     private HeadCoach headCoach;
 
     @OneToMany(mappedBy = "team", fetch = LAZY)
-    private List<Participant> Participants = new ArrayList<>();
+    private List<Participant> participants = new ArrayList<>();
 
     private int teamStat;
 
@@ -46,28 +45,11 @@ public class Team {
     }
 
     //== 비즈니스 로직 ==//
+
+    /**
+     * edit stat
+     */
     public void setTeamStat(int teamStat) {
         this.teamStat = teamStat;
     }
-
-    //== 연관관계 편의 메서드 ==//
-
-    /**
-     * Player Registration
-     */
-    public void addPlayer(Player player) {
-        this.players.add(player);
-        player.setTeam(this);
-    }
-
-    /**
-     * Player Deregistration
-     */
-    public void removePlayer(Player player) {
-        this.players.remove(player);
-        player.setTeam(null);
-    }
-
-
-
 }

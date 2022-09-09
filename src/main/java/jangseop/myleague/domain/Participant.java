@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.*;
 
 @Entity
 @Getter @Setter
-public class Participant {
+public class Participant implements Comparable<Participant> {
 
     @Id
     @GeneratedValue
@@ -38,6 +38,14 @@ public class Participant {
     private Record record;
 
 
+    //== 정렬 연산을 위한 Comparable interface 구현 ==//
+
+    @Override
+    public int compareTo(Participant o) {
+        return o.record.getScore() - this.record.getScore();
+    }
+
+
     //== 생성 메서드 ==//
 
     public static  Participant createParticipant(Team team, League league) {
@@ -53,5 +61,26 @@ public class Participant {
 
         return participant;
     }
+
+    //== 비즈니스 로직 ==//
+
+    /**
+     * add match result
+     */
+    public void addMatchResult(int myScore, int otherScore) {
+        record.addMatchResult(myScore, otherScore);
+        record.updateScore();
+        league.updateRanking();
+    }
+
+    /**
+     * remove match result
+     */
+    public void removeMatchResult(int myScore, int otherScore) {
+        record.removeMatchResult(myScore, otherScore);
+        record.updateScore();
+        league.updateRanking();
+    }
+
 
 }
