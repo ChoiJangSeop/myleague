@@ -91,14 +91,14 @@ class ParticipantServiceTest {
 
         // when
         Participant findParticipant = participantService
-                .searchParticipants(GEN, Worlds)
+                .searchParticipants(GEN.getId(), Worlds.getId())
                 .get(0);
 
         List<Participant> findParticipantsByTeam = participantService
-                .searchParticipants(GEN, null);
+                .searchParticipants(GEN.getId(), null);
 
         List<Participant> findParticipantsByLeague = participantService
-                .searchParticipants(null, Worlds);
+                .searchParticipants(null, Worlds.getId());
 
         // then
         assertThat(findParticipant).isEqualTo(gen_worlds);

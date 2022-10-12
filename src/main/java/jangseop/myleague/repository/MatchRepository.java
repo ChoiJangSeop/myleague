@@ -1,9 +1,8 @@
 package jangseop.myleague.repository;
 
-import jangseop.myleague.domain.League;
-import jangseop.myleague.domain.Match;
-import jangseop.myleague.domain.Participant;
-import jangseop.myleague.domain.Team;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jangseop.myleague.domain.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -23,6 +22,38 @@ public class MatchRepository {
 
     public Match findOne(Long id) {
         return em.find(Match.class, id);
+    }
+
+    public List<Match> findAll(MatchSearch matchSearch) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QMatch match = QMatch.match;
+        QParticipant home = new QParticipant("home");
+        QParticipant away = new QParticipant("away");
+
+        BooleanBuilder whereBuilder = new BooleanBuilder();
+
+        if (matchSearch.getTeam() != null) {
+            whereBuilder.and((match.home.team.eq(matchSearch.getTeam()))
+                            .or(match.away.team.eq(matchSearch.getTeam())));
+        }
+
+        if (matchSearch.getLeague() != null) {
+            whereBuilder.and(match.home.league.eq(matchSearch.getLeague()));
+        }
+
+
+        return queryFactory.selectFrom(match)
+                .leftJoin(match.home, home)
+                .leftJoin(match.away, away)
+                .where(whereBuilder)
+                .fetch();
+
+    }
+
+    public List<Match> findAll() {
+        return em.createQuery("select m from Match m", Match.class)
+                .getResultList();
     }
 
     public List<Match> findByTeam(Team team) {

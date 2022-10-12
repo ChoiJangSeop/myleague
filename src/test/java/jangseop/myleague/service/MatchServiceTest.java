@@ -3,15 +3,19 @@ package jangseop.myleague.service;
 import jangseop.myleague.domain.*;
 import jangseop.myleague.repository.MatchRepository;
 import jangseop.myleague.repository.TeamRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -160,6 +164,43 @@ class MatchServiceTest {
         assertThat(af_lck.getRecord().getSetLoss()).isEqualTo(1);
         assertThat(dk_lck.getRecord().getSetWin()).isEqualTo(1);
         assertThat(dk_lck.getRecord().getSetLoss()).isEqualTo(2);
+    }
+
+    @Test
+    public void 경기검색() throws Exception {
+        // given
+        League LCK = new League();
+        League LPL = new League();
+        em.persist(LCK);
+        em.persist(LPL);
+
+        Team DK = Team.createTeam("DWG KIA", 15);
+        Team AF = Team.createTeam("Afreeca Freecs", 16);
+        Team KT = Team.createTeam("KT Rolster", 10);
+
+        em.persist(DK);
+        em.persist(AF);
+        em.persist(KT);
+
+        Participant af_lck = participantService.create(AF.getId(), LCK.getId());
+        Participant dk_lck = participantService.create(DK.getId(), LCK.getId());
+        Participant kt_lck = participantService.create(KT.getId(), LCK.getId());
+        Participant af_lpl = participantService.create(AF.getId(), LPL.getId());
+        Participant dk_lpl = participantService.create(DK.getId(), LPL.getId());
+
+        Match match1 = matchService.create(null, af_lck.getId(), dk_lck.getId());
+        Match match2 = matchService.create(null, af_lck.getId(), kt_lck.getId());
+        Match match3 = matchService.create(null, af_lpl.getId(), dk_lpl.getId());
+
+        // when
+        List<Match> matchByDK = matchService.searchMatch(DK.getId(), null);
+        List<Match> matchByLCK = matchService.searchMatch(null, LCK.getId());
+        List<Match> matchByAF_LCK = matchService.searchMatch(AF.getId(), LCK.getId());
+
+        // then
+        Assertions.assertThat(matchByDK.size()).isEqualTo(2);
+        Assertions.assertThat(matchByLCK.size()).isEqualTo(2);
+        Assertions.assertThat(matchByAF_LCK.size()).isEqualTo(2);
     }
 }
 

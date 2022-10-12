@@ -5,12 +5,15 @@ import jangseop.myleague.domain.PlayerSearch;
 import jangseop.myleague.domain.Position;
 import jangseop.myleague.domain.Team;
 import jangseop.myleague.repository.PlayerRepository;
+import jangseop.myleague.repository.TeamRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -22,6 +25,7 @@ class PlayerServiceTest {
     @Autowired private PlayerService playerService;
     @Autowired private PlayerRepository playerRepository;
     @Autowired private TeamService teamService;
+    @Autowired private TeamRepository teamRepository;
 
     @Test
     public void 선수생성() throws Exception {
@@ -54,30 +58,26 @@ class PlayerServiceTest {
         Player kiin = playerService.create("kiin", Position.TOP, 15);
         Player doran = playerService.create("doran", Position.TOP, 12);
 
-        Team af = Team.createTeam("Afreeca Freecs", 12);
-        kiin.registerTeam(af);
+        Long af = teamService.create("Afreeca", 12);
+        kiin.registerTeam(teamRepository.findOne(af));
 
         // when
-        Player findPlayerByName = playerRepository
-                .findAll(new PlayerSearch("kiin", null, null))
-                .get(0);
+        List<Player> findPlayerByName = playerService.findPlayer("kiin", null, null);
+        List<Player> findPlayerByPosition = playerService.findPlayer(null, null, "TOP");
+        List<Player> findPlayerByPosAndTeam = playerService.findPlayer(null, af, "TOP");
 
-        Player findPlayerByTeam = playerRepository
-                .findAll(new PlayerSearch(null, af, null))
-                .get(0);
-
-        Player findPlayerByTeamPosition = playerRepository
-                .findAll(new PlayerSearch(null, af, Position.TOP))
-                .get(0);
-
-        int numFindPlayerByPosition = playerRepository
-                .findAll(new PlayerSearch(null, null, Position.TOP))
-                .size();
 
         // then
-        assertThat(findPlayerByName).isEqualTo(kiin);
-        assertThat(findPlayerByTeam).isEqualTo(kiin);
-        assertThat(findPlayerByTeamPosition).isEqualTo(kiin);
-        assertThat(numFindPlayerByPosition).isEqualTo(2);
+        assertThat(findPlayerByName.get(0)).isEqualTo(kiin);
+        assertThat(findPlayerByName.size()).isEqualTo(1);
+
+        assertThat(findPlayerByPosition.size()).isEqualTo(2);
+        assertThat(findPlayerByPosition.contains(kiin)).isEqualTo(true);
+        assertThat(findPlayerByPosition.contains(doran)).isEqualTo(true);
+
+        assertThat(findPlayerByPosAndTeam.size()).isEqualTo(1);
+        assertThat(findPlayerByPosAndTeam.get(0)).isEqualTo(kiin);
+
+
     }
 }

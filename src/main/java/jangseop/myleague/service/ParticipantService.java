@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +27,7 @@ public class ParticipantService {
     /**
      * 참가 도메인 생성 및 저장
      */
+    @Transactional
     public Participant create(Long teamId, Long leagueId) {
 
         // 엔티티 조회
@@ -56,9 +59,25 @@ public class ParticipantService {
     }
 
     /**
-     * TODO 참가팀 검색 (대회,팀) 동적쿼리
+     * 참가팀 검색 (대회,팀) 동적쿼리
      */
-    public List<Participant> searchParticipants(Team team, League league) {
+    public List<Participant> searchParticipants(Long teamId, Long leagueId) {
+
+        Team team;
+        League league;
+
+        if (teamId == null) {
+            team = null;
+        } else {
+            team = teamRepository.findOne(teamId);
+        }
+
+        if (leagueId == null) {
+            league = null;
+        } else {
+            league = leagueRepository.findOne(leagueId);
+        }
+
         return participantRepository.findAll(new ParticipantSearch(team, league));
     }
 }

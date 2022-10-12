@@ -1,15 +1,17 @@
 package jangseop.myleague.service;
 
-import jangseop.myleague.domain.Match;
-import jangseop.myleague.domain.Participant;
+import jangseop.myleague.domain.*;
+import jangseop.myleague.repository.LeagueRepository;
 import jangseop.myleague.repository.MatchRepository;
 import jangseop.myleague.repository.ParticipantRepository;
+import jangseop.myleague.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,10 +20,13 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final ParticipantRepository participantRepository;
+    private final TeamRepository teamRepository;
+    private final LeagueRepository leagueRepository;
 
     /**
      * 경기 생성 및 저장
      */
+    @Transactional
     public Match create(Date date, Long homeId, Long awayId) {
 
         // 엔티티 조회
@@ -58,6 +63,26 @@ public class MatchService {
                 (home.getLeague().getStartedDate().after(date) || home.getLeague().getEndDate().before(date))) {
             throw new IllegalStateException("경기 일정이 대회 일정 중에 있어야 합니다");
         }
+    }
 
+    // TODO dynamic search method
+    /**
+     * 동적 검색 메서드
+     */
+    public List<Match> searchMatch(Long teamId, Long leagueId) {
+
+        Team team = null;
+        League league = null;
+
+        if (teamId != null) {
+            team = teamRepository.findOne(teamId);
+        }
+
+        if (leagueId != null) {
+            league = leagueRepository.findOne(leagueId);
+        }
+
+        MatchSearch matchSearch = new MatchSearch(team, league);
+        return matchRepository.findAll(matchSearch);
     }
 }

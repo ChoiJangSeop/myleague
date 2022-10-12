@@ -34,6 +34,14 @@ public class PlayerRepository {
         return findPlayer.get(0);
     }
 
+    // overloading
+    public List<Player> findAll() {
+
+        return em.createQuery("select p from Player p", Player.class)
+                .getResultList();
+    }
+
+
     public List<Player> findAll(PlayerSearch playerSearch) {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
@@ -42,21 +50,26 @@ public class PlayerRepository {
         QTeam team = QTeam.team;
 
         BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder onBuilder = new BooleanBuilder();
+
         if (StringUtils.hasText(playerSearch.getName())) {
-            builder.and(player.name.contains(playerSearch.getName()));
+            builder.and(player.name.eq(playerSearch.getName()));
         }
 
-        if (playerSearch.getTeam() != null) {
-            builder.and(player.team.id.eq(playerSearch.getTeam().getId()));
+        if (playerSearch.getTeamId() != null) {
+            builder.and(player.team.id.eq(playerSearch.getTeamId()));
         }
 
         if (playerSearch.getPosition() != null) {
             builder.and(player.position.eq(playerSearch.getPosition()));
         }
 
+        onBuilder.and(player.team.id.eq(team.id));
+
         return queryFactory.selectFrom(player)
                 .leftJoin(team)
-                .on(builder)
+                .on(onBuilder)
+                .where(builder)
                 .fetch();
     }
 }

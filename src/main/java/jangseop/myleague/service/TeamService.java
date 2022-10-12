@@ -45,12 +45,20 @@ public class TeamService {
         }
     }
 
+    @Transactional
+    public Team update(Long teamId, String name, int stat) {
+        Team team = teamRepository.findOne(teamId);
 
-    /**
-     * 팀 조회
-     */
-    public Team findTeam(Long teamId) {
-        return teamRepository.findOne(teamId);
+        // TODO [refactoring] convert optional type
+        if (team == null) {
+            Long newTeamId = create(name, stat);
+            team = teamRepository.findOne(newTeamId);
+        } else {
+            team.setName(name);
+            team.setTeamStat(stat);
+        }
+
+        return team;
     }
 
     public Team findTeamByName(String name) {

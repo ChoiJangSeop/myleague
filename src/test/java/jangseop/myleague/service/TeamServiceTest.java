@@ -31,7 +31,7 @@ class TeamServiceTest {
         Long id = teamService.create("Afreeca Freecs", 10);
 
         // when
-        Team findTeam = teamService.findTeam(id);
+        Team findTeam = teamRepository.findOne(id);
 
         // then
         assertThat(findTeam.getName()).isSameAs("Afreeca Freecs");

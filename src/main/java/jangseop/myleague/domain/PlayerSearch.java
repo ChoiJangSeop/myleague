@@ -11,6 +11,6 @@ import lombok.Setter;
 public class PlayerSearch {
 
     private String name;
-    private Team team;
+    private Long teamId;
     private Position position;
 }

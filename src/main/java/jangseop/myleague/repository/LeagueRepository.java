@@ -24,8 +24,8 @@ public class LeagueRepository {
         return em.find(League.class, id);
     }
 
-
-
-
-
+    public List<League> findAll() {
+        return em.createQuery("select l from League l", League.class)
+                .getResultList();
+    }
 }

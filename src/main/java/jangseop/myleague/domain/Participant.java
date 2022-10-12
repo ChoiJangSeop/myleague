@@ -59,6 +59,7 @@ public class Participant implements Comparable<Participant> {
 
         participant.record = new Record();
 
+
         return participant;
     }
 

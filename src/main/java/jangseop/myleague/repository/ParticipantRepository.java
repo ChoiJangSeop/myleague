@@ -41,22 +41,27 @@ public class ParticipantRepository {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         QParticipant participant = QParticipant.participant;
-        QTeam team = QTeam.team;
-        QLeague league = QLeague.league;
+//        QTeam team = QTeam.team;
+//        QLeague league = QLeague.league;
 
         BooleanBuilder builder = new BooleanBuilder();
 
         if (participantSearch.getTeam() != null) {
-            builder.and(team.id.eq(participantSearch.getTeam().getId()));
+            builder.and(participant.team.eq(participantSearch.getTeam()));
         }
 
         if (participantSearch.getLeague() != null) {
-            builder.and(league.id.eq(participantSearch.getLeague().getId()));
+            builder.and(participant.league.eq(participantSearch.getLeague()));
         }
 
         List<Participant> participants = queryFactory.selectFrom(participant)
                 .where(builder)
                 .fetch();
         return participants;
+    }
+
+    public List<Participant> findAll() {
+        return em.createQuery("select p from Participant p", Participant.class)
+                .getResultList();
     }
 }

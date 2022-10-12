@@ -19,11 +19,12 @@ public class Team {
 
     private String name;
 
-    @OneToMany(mappedBy = "team", fetch = LAZY, cascade = CascadeType.ALL)
-    private List<Player> players = new ArrayList<>();
-
     @OneToOne(mappedBy = "team", fetch = LAZY, cascade = CascadeType.ALL)
     private HeadCoach headCoach;
+
+    @OneToMany(mappedBy = "team", fetch = LAZY)
+    private List<Player> players = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "team", fetch = LAZY)
     private List<Participant> participants = new ArrayList<>();
@@ -52,4 +53,5 @@ public class Team {
     public void setTeamStat(int teamStat) {
         this.teamStat = teamStat;
     }
+    public void setName(String name) { this.name = name; }
 }

@@ -13,6 +13,10 @@ public class Record {
     @Column(name = "RECORD_ID")
     private Long id;
 
+    // FIXME participant field's setter must be private
+    @OneToOne(mappedBy = "record")
+    private Participant participant;
+
     private int win = 0;
     private int draw = 0;
     private int loss = 0;
@@ -38,10 +42,6 @@ public class Record {
         } else {
             this.draw++;
         }
-
-        /**
-         * TODO rank 업데이트 -> 리그도메인
-         */
     }
 
     /**
@@ -70,5 +70,7 @@ public class Record {
     /**
      * TODO 점수 계산
      */
-    public void updateScore() {}
+    public void updateScore() {
+        score = win * 100 + setWin - setLoss;
+    }
 }
