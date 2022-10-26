@@ -57,13 +57,18 @@ public class TeamService {
     public Team update(Long teamId, String name, String shortName, int stat) {
         Team team = teamRepository.findOne(teamId);
 
+        if (name.length() == 0 || shortName.length() == 0) {
+            throw new IllegalStateException("모든 입력창을 입려해주세요");
+        }
+
+        shortName = shortName.replaceAll("\\s", "").toUpperCase();
+
         // TODO [refactoring] convert optional type
         if (team == null) {
             Long newTeamId = create(name, shortName, stat);
             team = teamRepository.findOne(newTeamId);
         } else {
-            team.setName(name);
-            team.setTeamStat(stat);
+            team.setAll(name, shortName, stat);
         }
 
         return team;

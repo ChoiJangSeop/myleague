@@ -63,8 +63,9 @@ public class Team {
     /**
      * edit stat
      */
-    public void setTeamStat(int teamStat) {
-        this.teamStat = teamStat;
+    public void setAll(String name, String shortName, int stat) {
+        this.name = name;
+        this.shortName = shortName;
+        this.teamStat = stat;
     }
-    public void setName(String name) { this.name = name; }
 }
