@@ -9,6 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TeamDto {
 
+    private Long id;
     private String name;
+
+    private String shortName;
     private int stat;
+
+    public TeamDto(String name, String shortName, int stat) {
+        this.name = name;
+        this.shortName = shortName;
+        this.stat = stat;
+    }
 }

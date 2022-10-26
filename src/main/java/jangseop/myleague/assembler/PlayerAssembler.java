@@ -16,7 +16,7 @@ public class PlayerAssembler implements RepresentationModelAssembler<Player, Ent
     @Override
     public EntityModel<PlayerDto> toModel(Player player) {
 
-        PlayerDto playerDto = new PlayerDto(player.getName(), player.getPosition(), player.getStat(), player.getTeam());
+        PlayerDto playerDto = new PlayerDto(player.getId(), player.getName(), player.getPosition(), player.getStat(), player.getTeam());
 
         return EntityModel.of(playerDto,
                 linkTo(methodOn(PlayerController.class).one(player.getId())).withSelfRel(),

@@ -19,6 +19,8 @@ public class Team {
 
     private String name;
 
+    private String shortName;
+
     @OneToOne(mappedBy = "team", fetch = LAZY, cascade = CascadeType.ALL)
     private HeadCoach headCoach;
 
@@ -33,13 +35,24 @@ public class Team {
 
     //== 생성 메서드 ==//
 
-    public static Team createTeam(String name, int teamStat) {
+    public static Team createTeam(String name, String shortName, int teamStat) {
+        Team team = new Team();
+        team.name = name;
+        team.shortName = shortName;
+        team.teamStat = teamStat;
+
+        return team;
+    }
+
+    // for test
+    public static Team createTeam(String name,int teamStat) {
         Team team = new Team();
         team.name = name;
         team.teamStat = teamStat;
 
         return team;
     }
+
 
     public void setHeadCoach(HeadCoach headCoach) {
         this.headCoach = headCoach;

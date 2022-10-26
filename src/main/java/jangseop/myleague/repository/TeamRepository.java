@@ -34,4 +34,10 @@ public class TeamRepository {
         return em.createQuery("select t from Team t", Team.class)
                 .getResultList();
     }
+
+    public Long delete(Team team) {
+        Long id = team.getId();
+        em.remove(team);
+        return id;
+    }
 }

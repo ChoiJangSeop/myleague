@@ -67,9 +67,7 @@ public class MatchController {
     public ResponseEntity<?> playMatch(
             @ApiParam(value = "결과를 입력할 경기의 아이디", required = true) @PathVariable Long id,
             @ApiParam(value = "경기 결과", required = true) @RequestBody MatchDto dto) {
-        Match match = matchRepository.findOne(id);
-        match.matchTeams(dto.getHomeScore(), dto.getAwayScore());
-
+        Match match = matchService.playMatch(id, dto.getHomeScore(), dto.getAwayScore());
         EntityModel<MatchDto> entityModel = matchAssembler.toModel(match);
 
         return ResponseEntity
@@ -81,8 +79,7 @@ public class MatchController {
     @PutMapping("/matches/{id}/cancel")
     public ResponseEntity<?> cancelMatch(
             @ApiParam(value = "결과 취소할 경기의 아이디", required = true) @PathVariable Long id) {
-        Match match = matchRepository.findOne(id);
-        match.cancelMatchTeams();
+        Match match = matchService.cancelMatch(id);
 
         EntityModel<MatchDto> entityModel = matchAssembler.toModel(match);
 

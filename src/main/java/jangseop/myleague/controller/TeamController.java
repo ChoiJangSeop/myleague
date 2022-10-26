@@ -17,16 +17,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Api(tags = {"1. Team"})
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class TeamController {
@@ -64,7 +68,7 @@ public class TeamController {
     @PostMapping("/teams")
     public EntityModel<TeamDto> newTeam(
             @ApiParam(value = "팀 입력 DTO(name/stat)", required = true) @RequestBody TeamDto dto) {
-        Long teamId = teamService.create(dto.getName(), dto.getStat());
+        Long teamId = teamService.create(dto.getName(), dto.getShortName(), dto.getStat());
         return teamAssembler.toModel(teamRepository.findOne(teamId));
     }
 
@@ -73,7 +77,7 @@ public class TeamController {
     public ResponseEntity<?> replaceTeam(
             @ApiParam(value="수정될 팀 아이디", required = true) @PathVariable Long teamId,
             @ApiParam(value="팀 수정사항 DTO", required = true) @RequestBody TeamDto dto) {
-        Team team = teamService.update(teamId, dto.getName(), dto.getStat());
+        Team team = teamService.update(teamId, dto.getName(), dto.getShortName(), dto.getStat());
 
         EntityModel<TeamDto> entityModel = teamAssembler.toModel(team);
 
@@ -81,4 +85,23 @@ public class TeamController {
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
+
+    @ApiOperation(value = "팀 삭제", notes = "입력한 id에 해당하는 팀을 삭제한다")
+    @DeleteMapping("/teams/{teamId}")
+    public void deleteTeam(
+            @ApiParam(value="삭제될 팀 아이디", required = true) @PathVariable Long teamId) {
+        teamService.delete(teamId);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(IllegalStateException.class)
+    public Map<String, String> handle(IllegalStateException e) {
+        log.error(e.getMessage(), e);
+        Map<String, String> errorAttributes = new HashMap<>();
+
+        errorAttributes.put("code", "NOT_VALIDATE");
+        errorAttributes.put("msg", e.getMessage());
+        return errorAttributes;
+    }
+
 }

@@ -91,7 +91,7 @@ class TeamControllerTest {
     @Test
     public void postOne() throws Exception {
         // given
-        String team = objectMapper.writeValueAsString(new TeamDto("Afreeca", 11));
+        String team = objectMapper.writeValueAsString(new TeamDto("Afreeca", "AF", 11));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/teams")
@@ -108,7 +108,7 @@ class TeamControllerTest {
     public void putOne() throws Exception {
         // given
         Long teamId = teamRepository.save(Team.createTeam("Afreeca", 15));
-        String newTeam = objectMapper.writeValueAsString(new TeamDto("Gen.G", 11));
+        String newTeam = objectMapper.writeValueAsString(new TeamDto("Gen.G", "GEN", 11));
 
         // case#1 : update name
 

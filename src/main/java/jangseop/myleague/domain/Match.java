@@ -2,6 +2,7 @@ package jangseop.myleague.domain;
 
 import lombok.Getter;
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Entity

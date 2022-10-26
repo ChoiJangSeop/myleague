@@ -10,12 +10,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlayerDto {
 
+    private Long id;
+
     private String name;
     private Position position;
     private int stat;
     private Long teamId = -1L;
 
-    public PlayerDto(String name, Position position, int stat, Team team) {
+    public PlayerDto(Long id, String name, Position position, int stat, Team team) {
+
+        this.id = id;
         this.name = name;
         this.position = position;
         this.stat = stat;
@@ -23,8 +27,16 @@ public class PlayerDto {
         if (team != null) this.teamId = team.getId();
     }
 
-
     public PlayerDto(String name, Position position, int stat) {
+
+        this.name = name;
+        this.position = position;
+        this.stat = stat;
+    }
+
+
+    public PlayerDto(Long id, String name, Position position, int stat) {
+        this.id = id;
         this.name = name;
         this.position = position;
         this.stat = stat;

@@ -23,9 +23,12 @@ public class TeamService {
      * 팀 생성
      */
     @Transactional
-    public Long create(String name, int teamStat) {
-        validateCreateTeam(name);
-        Team team = Team.createTeam(name, teamStat);
+    public Long create(String name, String shortName, int teamStat) {
+
+        shortName = shortName.replaceAll("\\s", "").toUpperCase();
+
+        validateCreateTeam(name, shortName);
+        Team team = Team.createTeam(name, shortName, teamStat);
         return teamRepository.save(team);
     }
 
@@ -34,24 +37,29 @@ public class TeamService {
      * 1. 팀 이름 중복 금지
      * 2. 선수/감독 이중등록 금지
      */
-    public void validateCreateTeam(String name) {
+    public void validateCreateTeam(String name, String shortName) {
+
+        if (name.length() == 0 || shortName.length() == 0) {
+            throw new IllegalStateException("팀명과 팀이니셜을 모두 입력해야 합니다");
+        }
+
         List<Team> findTeams = teamRepository.findAll();
 
         // duplicate name
         for (Team findTeam : findTeams) {
-            if (findTeam.getName().equals(name)) {
-                throw new IllegalStateException("이미 동일한 이름의 팀이 존재합니다");
+            if (findTeam.getShortName().equals(shortName) || findTeam.getName().equals(name)) {
+                throw new IllegalStateException("이미 동일한 이름의 팀명(이니셜)이 존재합니다");
             }
         }
     }
 
     @Transactional
-    public Team update(Long teamId, String name, int stat) {
+    public Team update(Long teamId, String name, String shortName, int stat) {
         Team team = teamRepository.findOne(teamId);
 
         // TODO [refactoring] convert optional type
         if (team == null) {
-            Long newTeamId = create(name, stat);
+            Long newTeamId = create(name, shortName, stat);
             team = teamRepository.findOne(newTeamId);
         } else {
             team.setName(name);
@@ -59,6 +67,12 @@ public class TeamService {
         }
 
         return team;
+    }
+
+    @Transactional
+    public void delete(Long teamId) {
+        Team team = teamRepository.findOne(teamId);
+        teamRepository.delete(team);
     }
 
     public Team findTeamByName(String name) {

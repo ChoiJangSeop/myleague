@@ -65,6 +65,25 @@ public class MatchService {
         }
     }
 
+    /**
+     * 경기 결과 입력
+     */
+    @Transactional
+    public Match playMatch(Long matchId, int homeScore, int awayScore) {
+        Match match = matchRepository.findOne(matchId);
+        match.matchTeams(homeScore, awayScore);
+
+        return match;
+    }
+
+    @Transactional
+    public Match cancelMatch(Long matchId) {
+        Match match = matchRepository.findOne(matchId);
+        match.cancelMatchTeams();
+
+        return match;
+    }
+
     // TODO dynamic search method
     /**
      * 동적 검색 메서드

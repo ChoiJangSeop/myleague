@@ -20,7 +20,7 @@ public class TeamAssembler implements RepresentationModelAssembler<Team, EntityM
     @Override
     public EntityModel<TeamDto> toModel(Team team) {
 
-        TeamDto teamDto = new TeamDto(team.getName(), team.getTeamStat());
+        TeamDto teamDto = new TeamDto(team.getId(), team.getName(), team.getShortName(), team.getTeamStat());
 
         Map<String, String> param = new HashMap<>();
         if (team.getId() != null) {
