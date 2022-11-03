@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.hibernate.mapping.Collection;
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;

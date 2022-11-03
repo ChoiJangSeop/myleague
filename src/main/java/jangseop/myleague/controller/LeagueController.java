@@ -10,12 +10,17 @@ import jangseop.myleague.dto.PlayerDto;
 import jangseop.myleague.repository.LeagueRepository;
 import jangseop.myleague.service.LeagueService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -24,6 +29,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Api(tags = {"3. League"})
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class LeagueController {
 
     private final LeagueService leagueService;
@@ -57,5 +63,16 @@ public class LeagueController {
             @ApiParam(value = "생성할 리그 정보") @RequestBody LeagueDto leagueDto) {
         League league = leagueService.create(leagueDto);
         return leagueAssembler.toModel(league);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalStateException.class)
+    public Map<String, String> handle(IllegalStateException e) {
+        log.error(e.getMessage(), e);
+        Map<String, String> errorAttributes = new HashMap<>();
+
+        errorAttributes.put("code", "NOT_VALIDATE");
+        errorAttributes.put("msg", e.getMessage());
+        return errorAttributes;
     }
 }
