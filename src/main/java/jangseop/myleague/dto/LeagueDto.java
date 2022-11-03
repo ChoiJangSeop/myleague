@@ -12,8 +12,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class LeagueDto {
     private String title;
-    private Date startedDate;
-    private Date endDate;
+    private String startedDate;
+    private String endDate;
     private int roundRobins;
     private int promotions;
     private Playoff playoff;

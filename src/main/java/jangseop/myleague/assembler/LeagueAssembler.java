@@ -16,8 +16,8 @@ public class LeagueAssembler implements RepresentationModelAssembler<League, Ent
     @Override
     public EntityModel<LeagueDto> toModel(League league) {
         LeagueDto leagueDto = new LeagueDto(league.getTitle(),
-                league.getStartedDate(),
-                league.getEndDate(),
+                league.getStartedDate() != null ? league.getStartedDate().toString() : null,
+                league.getEndDate() != null ? league.getEndDate().toString() : null,
                 league.getMethod().getRoundrobins(),
                 league.getMethod().getPromotion(),
                 league.getMethod().getPlayoff());
