@@ -11,7 +11,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeagueDto {
-
     private String title;
     private Date startedDate;
     private Date endDate;
