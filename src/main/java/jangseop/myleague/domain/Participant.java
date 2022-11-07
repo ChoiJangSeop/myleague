@@ -19,11 +19,11 @@ public class Participant implements Comparable<Participant> {
     @Column(name = "PARTICIPANT_ID")
     private Long id;
 
-    @ManyToOne(fetch = LAZY, cascade = ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
-    @ManyToOne(fetch = LAZY, cascade = ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "LEAGUE_ID")
     private League league;
 
