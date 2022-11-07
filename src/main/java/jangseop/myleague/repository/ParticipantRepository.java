@@ -64,4 +64,10 @@ public class ParticipantRepository {
         return em.createQuery("select p from Participant p", Participant.class)
                 .getResultList();
     }
+
+    public Long delete(Participant participant) {
+        Long id = participant.getId();
+        em.remove(participant);
+        return id;
+    }
 }

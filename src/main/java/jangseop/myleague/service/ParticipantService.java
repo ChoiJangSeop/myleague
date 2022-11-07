@@ -80,4 +80,13 @@ public class ParticipantService {
 
         return participantRepository.findAll(new ParticipantSearch(team, league));
     }
+
+    /**
+     * 참가 도메인 삭제
+     */
+    @Transactional
+    public void delete(Long id) {
+        Participant participant = participantRepository.findOne(id);
+        participantRepository.delete(participant);
+    }
 }

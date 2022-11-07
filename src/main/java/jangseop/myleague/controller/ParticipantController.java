@@ -84,4 +84,11 @@ public class ParticipantController {
 
         return CollectionModel.of(participants, linkTo(methodOn(ParticipantController.class).search(param)).withSelfRel());
     }
+
+    @ApiOperation(value = "참가팀 삭제", notes = "입력한 id에 해당하는 참가팀을 삭제한다")
+    @DeleteMapping("/participants/{participantId}")
+    public void deleteTeam(
+            @ApiParam(value="삭제될 참가팀 아이디", required = true) @PathVariable Long participantId) {
+        participantService.delete(participantId);
+    }
 }

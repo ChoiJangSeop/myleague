@@ -17,6 +17,7 @@ public class ParticipantAssembler implements RepresentationModelAssembler<Partic
     public EntityModel<ParticipantDto> toModel(Participant participant) {
 
         ParticipantDto participantDto = new ParticipantDto(
+                participant.getId(),
                 participant.getTeam().getId(),
                 participant.getLeague().getId(),
                 participant.getRecord());

@@ -10,6 +10,8 @@ import lombok.Getter;
 @Getter
 public class ParticipantDto {
 
+    private Long id;
+
     private Long teamId;
     private Long leagueId;
 
@@ -21,7 +23,22 @@ public class ParticipantDto {
     private int score;
     private int rank;
 
+    public ParticipantDto(Long id, Long teamId, Long leagueId, Record record) {
+        this.id = id;
+        this.teamId = teamId;
+        this.leagueId = leagueId;
+
+        this.win = record.getWin();
+        this.loss = record.getLoss();
+        this.draw = record.getDraw();
+        this.setWin = record.getSetWin();
+        this.setLoss = record.getSetLoss();
+        this.score = record.getScore();
+        this.rank = record.getRank();
+    }
+
     public ParticipantDto(Long teamId, Long leagueId, Record record) {
+        this.id = id;
         this.teamId = teamId;
         this.leagueId = leagueId;
 
