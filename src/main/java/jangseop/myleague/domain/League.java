@@ -48,6 +48,16 @@ public class League {
         return league;
     }
 
+    /**
+     * setting league
+     */
+    public void setAll(String title, Date startedDate, Date endDate, Method method) {
+        this.title = title;
+        this.startedDate = startedDate;
+        this.endDate = endDate;
+        this.method = method;
+    }
+
     //== 비즈니스 로직 ==//
 
     /**

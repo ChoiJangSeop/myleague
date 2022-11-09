@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -63,6 +64,20 @@ public class LeagueController {
             @ApiParam(value = "생성할 리그 정보") @RequestBody LeagueDto leagueDto) {
         League league = leagueService.create(leagueDto);
         return leagueAssembler.toModel(league);
+    }
+
+    @ApiOperation(value = "리그 수정", notes = "입력한 id에 해당하는 팀을 수정합니다.")
+    @PutMapping("/leagues/{id}")
+    public ResponseEntity<?> replaceLeague(
+            @ApiParam(value = "리그 아이디", required = true) @PathVariable Long id,
+            @ApiParam(value = "수정할 리그 정보") @RequestBody LeagueDto leagueDto) {
+        League league = leagueService.update(id, leagueDto);
+
+        EntityModel<LeagueDto> entityModel = leagueAssembler.toModel(league);
+
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

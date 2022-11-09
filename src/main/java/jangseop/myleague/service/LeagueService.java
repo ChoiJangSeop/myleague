@@ -1,6 +1,8 @@
 package jangseop.myleague.service;
 
 import jangseop.myleague.domain.League;
+import jangseop.myleague.domain.Method;
+import jangseop.myleague.domain.Playoff;
 import jangseop.myleague.dto.LeagueDto;
 import jangseop.myleague.repository.LeagueRepository;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +74,29 @@ public class LeagueService {
         if (startedDate_int > endDate_int) {
             throw new IllegalStateException("시작 날짜가 종료 날짜보다 이전이야야 합니다.");
         }
+    }
+
+    @Transactional
+    public League update(Long id, LeagueDto dto) {
+        League league = leagueRepository.findOne(id);
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        format.setLenient(false);
+
+        Date parseStartedDate = null;
+        Date parseEndDate= null;
+
+        try {
+            parseStartedDate = format.parse(dto.getStartedDate());
+            parseEndDate = format.parse(dto.getEndDate());
+        } catch (ParseException ex) {
+            throw new IllegalStateException("유효하지 않는 날짜 형식입니다");
+        }
+
+        Method method = Method.createMethod(dto.getRoundRobins(), dto.getPromotions(), dto.getPlayoff());
+        league.setAll(dto.getTitle(), parseStartedDate, parseEndDate, method);
+
+        return league;
     }
 
     public void registerMatches() {
