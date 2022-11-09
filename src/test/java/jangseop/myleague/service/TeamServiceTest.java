@@ -28,7 +28,7 @@ class TeamServiceTest {
     @Test
     public void 팀생성() throws Exception {
         // given
-        Long id = teamService.create("Afreeca Freecs", 10);
+        Long id = teamService.create("Afreeca Freecs", "AF", 10);
 
         // when
         Team findTeam = teamRepository.findOne(id);
@@ -41,11 +41,11 @@ class TeamServiceTest {
     public void 팀이름중복검증() throws Exception {
         // given
         // when
-        teamService.create("team", 19);
+        teamService.create("team", "t", 19);
 
         // then
         org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class, () -> {
-            teamService.create("team", 19);
+            teamService.create("team", "t", 19);
         });
     }
 }

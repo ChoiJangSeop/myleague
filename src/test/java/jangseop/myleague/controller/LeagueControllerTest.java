@@ -74,7 +74,7 @@ class LeagueControllerTest {
     public void postOne() throws Exception {
         // given
         String dto = objectMapper.writeValueAsString(
-                new LeagueDto("LCK", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION));
+                new LeagueDto(1L, "LCK", "2022-10-31", "2022-11-01", 1, 1, Playoff.DOUBLE_ELIMINATION));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/leagues")

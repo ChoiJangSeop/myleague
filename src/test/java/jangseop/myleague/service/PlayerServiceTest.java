@@ -58,7 +58,7 @@ class PlayerServiceTest {
         Player kiin = playerService.create("kiin", Position.TOP, 15);
         Player doran = playerService.create("doran", Position.TOP, 12);
 
-        Long af = teamService.create("Afreeca", 12);
+        Long af = teamService.create("Afreeca", "AF", 12);
         kiin.registerTeam(teamRepository.findOne(af));
 
         // when
