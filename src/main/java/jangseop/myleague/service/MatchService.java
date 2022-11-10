@@ -58,11 +58,6 @@ public class MatchService {
         if (home.getLeague() != away.getLeague()) {
             throw new IllegalStateException("경기에 참가하는 팀은 같은 대회에 소속되어 있어야 합니다");
         }
-
-        if (date != null &&
-                (home.getLeague().getStartedDate().after(date) || home.getLeague().getEndDate().before(date))) {
-            throw new IllegalStateException("경기 일정이 대회 일정 중에 있어야 합니다");
-        }
     }
 
     /**
