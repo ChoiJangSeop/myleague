@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter @Setter
 public class MatchDto {
 
+    private Long id;
     private int round;
     private Date matchDate;
 
@@ -23,6 +24,7 @@ public class MatchDto {
     private int awayScore;
 
     public MatchDto(Match match) {
+        this.id = match.getId();
         this.round = match.getRound();
         this.matchDate = match.getMatchDate();
         this.homeId = match.getHome().getId();
