@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Entity
 @Getter
-public class Match {
+public class Match implements Comparable<Match> {
 
     @Id
     @GeneratedValue
@@ -77,5 +77,17 @@ public class Match {
 
         this.homeScore = -1;
         this.awayScore = -1;
+    }
+
+    @Override
+    public int compareTo(Match m) {
+
+        // null handling
+        if (m.getMatchDate() == null) return 1;
+        if (this.matchDate == null) return -1;
+
+        if (m.getMatchDate().getTime() < this.matchDate.getTime()) return 1;
+        else if (m.getMatchDate().getTime() > this.matchDate.getTime()) return -1;
+        else return 0;
     }
 }

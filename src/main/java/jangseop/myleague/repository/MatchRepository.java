@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
@@ -43,12 +46,15 @@ public class MatchRepository {
         }
 
 
-        return queryFactory.selectFrom(match)
+        List<Match> matches = queryFactory.selectFrom(match)
                 .leftJoin(match.home, home)
                 .leftJoin(match.away, away)
                 .where(whereBuilder)
                 .fetch();
 
+        Collections.sort(matches);
+
+        return matches;
     }
 
     public List<Match> findAll() {
@@ -62,4 +68,12 @@ public class MatchRepository {
                 .getResultList();
     }
 
+}
+
+class MatchComparator implements Comparator<Match> {
+
+    @Override
+    public int compare(Match m1, Match m2) {
+        return m1.compareTo(m2);
+    }
 }

@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -202,6 +204,51 @@ class MatchServiceTest {
         Assertions.assertThat(matchByDK.size()).isEqualTo(2);
         Assertions.assertThat(matchByLCK.size()).isEqualTo(2);
         Assertions.assertThat(matchByAF_LCK.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void 경기검색_출력순서() throws Exception {
+        // given
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String date1_str = "2022-10-02";
+        String date2_str = "2022-10-01";
+        String date3_str = "2022-09-24";
+        String date4_str = "2021-12-21";
+        // order : 4 -> 3 -> 2 -> 1
+
+        Date date1 = format.parse(date1_str);
+        Date date2 = format.parse(date2_str);
+        Date date3 = format.parse(date3_str);
+        Date date4 = format.parse(date4_str);
+
+        League LCK = new League();
+        League LPL = new League();
+        em.persist(LCK);
+        em.persist(LPL);
+
+        Team DK = Team.createTeam("DWG KIA", 15);
+        Team AF = Team.createTeam("Afreeca Freecs", 16);
+
+        em.persist(DK);
+        em.persist(AF);
+
+        Participant af_lck = participantService.create(AF.getId(), LCK.getId());
+        Participant dk_lck = participantService.create(DK.getId(), LCK.getId());
+
+        matchService.create(date1, af_lck.getId(), dk_lck.getId());
+        matchService.create(date3, af_lck.getId(), dk_lck.getId());
+        matchService.create(date2, af_lck.getId(), dk_lck.getId());
+        matchService.create(date4, af_lck.getId(), dk_lck.getId());
+
+        // when
+        List<Match> matchByLCK = matchService.searchMatch(null, LCK.getId());
+
+        // then
+        Date prev = format.parse("2020-01-01");
+        for (int i=0; i<matchByLCK.size(); ++i) {
+            Assertions.assertThat(prev.getTime() <= matchByLCK.get(i).getMatchDate().getTime()).isEqualTo(true);
+            prev = matchByLCK.get(i).getMatchDate();
+        }
     }
 }
 
