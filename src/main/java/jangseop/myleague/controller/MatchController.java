@@ -58,7 +58,7 @@ public class MatchController {
     @PostMapping("/matches")
     public EntityModel<MatchDto> newMatch(
             @ApiParam(value = "생성할 선수 정보", required = true) @RequestBody MatchDto dto) {
-        Match match = matchService.create(dto.getMatchDate(), dto.getHomeId(), dto.getAwayId());
+        Match match = matchService.create(dto.getRound(), dto.getMatchDate(), dto.getHomeId(), dto.getAwayId());
         return matchAssembler.toModel(match);
     }
 

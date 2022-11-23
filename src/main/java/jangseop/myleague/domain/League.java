@@ -67,11 +67,22 @@ public class League {
         Collections.sort(participants);
         int length = participants.size();
 
-        IntStream.range(0, length).forEach(index -> {
+        int curr = 1;
+        for (int index=0; index<participants.size(); ++index) {
             participants.get(index)
                     .getRecord()
                     .setRank(index+1);
-        });
+        }
+
+        for (int index=1; index<participants.size(); ++index) {
+            if (participants.get(index).getRecord().getScore() == participants.get(index-1).getRecord().getScore()) {
+                participants.get(index)
+                        .getRecord()
+                        .setRank(curr);
+            } else {
+                curr = index + 1;
+            }
+        }
     }
 
     /**

@@ -27,7 +27,7 @@ public class MatchService {
      * 경기 생성 및 저장
      */
     @Transactional
-    public Match create(Date date, Long homeId, Long awayId) {
+    public Match create(int round, Date date, Long homeId, Long awayId) {
 
         // 엔티티 조회
         Participant home = participantRepository.findOne(homeId);
@@ -37,7 +37,7 @@ public class MatchService {
         validateCreateMatch(date, home, away);
 
         // 경기 생성
-        Match match = Match.createMatch(date, 1, home, away);
+        Match match = Match.createMatch(date, round, home, away);
 
         // 경기 저장
         matchRepository.save(match);

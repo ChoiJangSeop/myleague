@@ -71,6 +71,6 @@ public class Record {
      * TODO 점수 계산
      */
     public void updateScore() {
-        score = win * 100 + setWin - setLoss;
+        this.score = (win - loss) * 100 + setWin - setLoss;
     }
 }
