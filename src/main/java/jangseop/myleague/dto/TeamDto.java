@@ -15,9 +15,12 @@ public class TeamDto {
     private String shortName;
     private int stat;
 
-    public TeamDto(String name, String shortName, int stat) {
+    private int activation;
+
+    public TeamDto(String name, String shortName, int stat, int activation) {
         this.name = name;
         this.shortName = shortName;
         this.stat = stat;
+        this.activation = activation;
     }
 }

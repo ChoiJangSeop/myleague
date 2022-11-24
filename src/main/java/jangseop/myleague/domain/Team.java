@@ -32,6 +32,7 @@ public class Team {
     private List<Participant> participants = new ArrayList<>();
 
     private int teamStat;
+    private int activation;
 
     //== 생성 메서드 ==//
 
@@ -40,6 +41,7 @@ public class Team {
         team.name = name;
         team.shortName = shortName;
         team.teamStat = teamStat;
+        team.activation = 1;
 
         return team;
     }
@@ -67,5 +69,13 @@ public class Team {
         this.name = name;
         this.shortName = shortName;
         this.teamStat = stat;
+    }
+
+    public void activeTeam() {
+        this.activation = 1;
+    }
+
+    public void inactiveTeam() {
+        this.activation = 0;
     }
 }

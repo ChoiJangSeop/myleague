@@ -90,7 +90,7 @@ public class TeamController {
     @DeleteMapping("/teams/{teamId}")
     public void deleteTeam(
             @ApiParam(value="삭제될 팀 아이디", required = true) @PathVariable Long teamId) {
-        teamService.delete(teamId);
+        teamService.inactiveTeam(teamId);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

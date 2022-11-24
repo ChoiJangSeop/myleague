@@ -80,6 +80,12 @@ public class TeamService {
         teamRepository.delete(team);
     }
 
+    @Transactional
+    public void inactiveTeam(Long teamId) {
+        Team team = teamRepository.findOne(teamId);
+        team.inactiveTeam();
+    }
+
     public Team findTeamByName(String name) {
         return teamRepository.findByName(name).get(0);
     }
