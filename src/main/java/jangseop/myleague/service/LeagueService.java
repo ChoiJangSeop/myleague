@@ -99,6 +99,12 @@ public class LeagueService {
         return league;
     }
 
+    @Transactional
+    public void deleteLeague(Long leagueId) {
+        League findLeague = leagueRepository.findOne(leagueId);
+        leagueRepository.delete(findLeague);
+    }
+
     public void registerMatches() {
 
     }

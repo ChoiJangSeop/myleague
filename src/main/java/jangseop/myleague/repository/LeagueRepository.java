@@ -28,4 +28,10 @@ public class LeagueRepository {
         return em.createQuery("select l from League l", League.class)
                 .getResultList();
     }
+
+    public Long delete(League league) {
+        Long id = league.getId();
+        em.remove(league);
+        return id;
+    }
 }

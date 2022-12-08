@@ -94,4 +94,10 @@ public class TeamService {
      * 대회 참가
      */
     public void perticipate() {}
+
+    @Transactional
+    public void activateTeam(Long teamId) {
+        Team team = teamRepository.findOne(teamId);
+        team.activeTeam();
+    }
 }

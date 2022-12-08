@@ -80,6 +80,13 @@ public class LeagueController {
                 .body(entityModel);
     }
 
+    @ApiOperation(value = "리그 삭제", notes = "입력한 id에 해당하는 리그를 삭제합니다.")
+    @DeleteMapping("/leagues/{id}")
+    public void deleteLeague(
+            @ApiParam(value = "리그 아이디", required = true) @PathVariable Long id) {
+        leagueService.deleteLeague(id);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalStateException.class)
     public Map<String, String> handle(IllegalStateException e) {

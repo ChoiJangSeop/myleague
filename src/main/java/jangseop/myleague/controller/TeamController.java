@@ -93,6 +93,13 @@ public class TeamController {
         teamService.inactiveTeam(teamId);
     }
 
+    @ApiOperation(value = "팀 재복구", notes = "삭제된 팀을 다시 복구합니다.")
+    @PutMapping("/teams/{teamId}/activate")
+    public void activateTeam(
+            @ApiParam(value = "복구할 팀의 아이디", required = true) @PathVariable Long teamId) {
+        teamService.activateTeam(teamId);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(IllegalStateException.class)
     public Map<String, String> handle(IllegalStateException e) {
