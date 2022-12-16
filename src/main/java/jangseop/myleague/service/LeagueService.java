@@ -24,7 +24,7 @@ public class LeagueService {
     @Transactional
     public League create(LeagueDto leagueDto) {
 
-        validateTitleDuplicate(leagueDto.getTitle(), leagueDto.getStartedDate(), leagueDto.getEndDate());
+        validateTitleDuplicate(leagueDto.getTitle());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         format.setLenient(false);
 
@@ -53,7 +53,7 @@ public class LeagueService {
         return league;
     }
 
-    private void validateTitleDuplicate(String title, String startedDate, String endDate) {
+    private void validateTitleDuplicate(String title) {
 
         // 1. duplicate title
         long duplicateTitles = leagueRepository.findAll().stream()

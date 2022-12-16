@@ -68,6 +68,10 @@ public class MatchRepository {
                 .getResultList();
     }
 
+    public void delete(Match match) {
+        em.remove(match);
+    }
+
 }
 
 class MatchComparator implements Comparator<Match> {

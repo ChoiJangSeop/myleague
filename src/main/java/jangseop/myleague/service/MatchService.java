@@ -99,4 +99,13 @@ public class MatchService {
         MatchSearch matchSearch = new MatchSearch(team, league);
         return matchRepository.findAll(matchSearch);
     }
+
+    /**
+     * 경기 삭제
+     */
+    @Transactional
+    public void deleteMatch(Long matchId) {
+        Match findMatch = matchRepository.findOne(matchId);
+        matchRepository.delete(findMatch);
+    }
 }

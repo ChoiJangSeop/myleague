@@ -111,4 +111,11 @@ public class MatchController {
         return CollectionModel.of(matches,
                 linkTo(methodOn(MatchController.class).searchMatch(param)).withSelfRel());
     }
+
+    @ApiOperation(value = "경기 삭제", notes = "경기를 삭제합니다")
+    @DeleteMapping("/matches/{id}")
+    public void deleteMatch(
+            @ApiParam(value = "삭제할 경기의 아이디", required = true) @PathVariable Long id) {
+        matchService.deleteMatch(id);
+    }
 }
