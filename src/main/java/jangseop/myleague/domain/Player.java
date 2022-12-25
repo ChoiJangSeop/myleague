@@ -72,5 +72,14 @@ public class Player {
      */
     public void setPosition(Position position) { this.position = position; }
 
+    /**
+     * 선수 정보 수정
+     */
+    public void setInfo(String name, Position position, int stat) {
+        this.name = name;
+        this.position = position;
+        this.stat = stat;
+    }
+
 
 }

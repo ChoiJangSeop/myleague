@@ -52,8 +52,7 @@ public class PlayerService {
         if (player == null) {
             player = create(name, position, stat);
         } else {
-            player.setPosition(position);
-            player.setStat(stat);
+            player.setInfo(name, position, stat);
         }
 
         return player;
