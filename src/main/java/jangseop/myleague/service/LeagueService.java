@@ -94,7 +94,7 @@ public class LeagueService {
         }
 
         Method method = Method.createMethod(dto.getRoundRobins(), dto.getPromotions(), dto.getPlayoff());
-        league.setAll(dto.getTitle(), parseStartedDate, parseEndDate, method);
+        league.setAll(dto.getTitle(), parseStartedDate, parseEndDate, dto.getLeagueStatus(), method);
 
         return league;
     }

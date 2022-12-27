@@ -34,6 +34,9 @@ public class League {
     @Embedded
     private Method method;
 
+    @Enumerated(value = EnumType.STRING)
+    private LeagueStatus leagueStatus;
+
     //== 생성 메서드 ==//
     public static League createLeague(
             String title, Date startedDate, Date endDate, int roundrobins, int promotion, Playoff playoff
@@ -43,6 +46,7 @@ public class League {
         league.title = title;
         league.startedDate = startedDate;
         league.endDate = endDate;
+        league.leagueStatus = LeagueStatus.PROCEEDING;
         league.method = Method.createMethod(roundrobins, promotion, playoff);
 
         return league;
@@ -51,10 +55,11 @@ public class League {
     /**
      * setting league
      */
-    public void setAll(String title, Date startedDate, Date endDate, Method method) {
+    public void setAll(String title, Date startedDate, Date endDate, LeagueStatus status, Method method) {
         this.title = title;
         this.startedDate = startedDate;
         this.endDate = endDate;
+        this.leagueStatus = status;
         this.method = method;
     }
 

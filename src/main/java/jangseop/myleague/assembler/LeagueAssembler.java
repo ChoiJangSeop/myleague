@@ -20,6 +20,7 @@ public class LeagueAssembler implements RepresentationModelAssembler<League, Ent
                 league.getTitle(),
                 league.getStartedDate() != null ? league.getStartedDate().toString() : null,
                 league.getEndDate() != null ? league.getEndDate().toString() : null,
+                league.getLeagueStatus(),
                 league.getMethod().getRoundrobins(),
                 league.getMethod().getPromotion(),
                 league.getMethod().getPlayoff());

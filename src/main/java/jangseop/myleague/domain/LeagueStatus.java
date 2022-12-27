@@ -1,2 +1,5 @@
-package jangseop.myleague.domain;public enum LeagueStatus {
+package jangseop.myleague.domain;
+
+public enum LeagueStatus {
+    PROCEEDING, END, INACTIVATION, EXPECTED
 }

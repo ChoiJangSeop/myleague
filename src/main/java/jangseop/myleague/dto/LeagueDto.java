@@ -1,5 +1,6 @@
 package jangseop.myleague.dto;
 
+import jangseop.myleague.domain.LeagueStatus;
 import jangseop.myleague.domain.Playoff;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class LeagueDto {
     private String title;
     private String startedDate;
     private String endDate;
+    private LeagueStatus leagueStatus;
     private int roundRobins;
     private int promotions;
     private Playoff playoff;
