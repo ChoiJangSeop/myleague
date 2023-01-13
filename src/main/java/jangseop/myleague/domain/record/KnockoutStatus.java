@@ -1,5 +1,5 @@
 package jangseop.myleague.domain.record;
 
-public enum TournamentStatus {
+public enum KnockoutStatus {
     OUT, PROCEEDING
 }

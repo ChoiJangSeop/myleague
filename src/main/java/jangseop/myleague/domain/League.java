@@ -1,5 +1,6 @@
 package jangseop.myleague.domain;
 
+import jangseop.myleague.domain.record.Record;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.mapping.Collection;
@@ -7,10 +8,8 @@ import org.hibernate.mapping.Collection;
 import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Entity
@@ -69,78 +68,76 @@ public class League {
      * update rank
      */
     public void updateRanking() {
-        Collections.sort(participants);
-        int length = participants.size();
+        Comparator<Participant> comparator = new Comparator<>() {
+            @Override
+            public int compare(Participant p1, Participant p2) {
+                p1.getRecords().sort(Comparator.comparing(Record::getRound).reversed());
+                p2.getRecords().sort(Comparator.comparing(Record::getRound).reversed());
 
-        int curr = 1;
-        for (int index=0; index<participants.size(); ++index) {
-            participants.get(index)
-                    .getRecord()
-                    .setRank(index+1);
-        }
+                if (p1.getRecords().get(0).getRound() > p2.getRecords().get(0).getRound()) return -1;
+                else if (p1.getRecords().get(0).getRound() < p2.getRecords().get(0).getRound()) return 1;
+                else {
+                    int idx = 0;
+                    while (idx < p1.getRecords().size()) {
+                        if (p1.getRecords().get(idx).getRank() < p2.getRecords().get(idx).getRank()) return -1;
+                        else if (p1.getRecords().get(idx).getRank() > p2.getRecords().get(idx).getRank()) return 1;
+                        idx++;
+                    }
+                    return 0;
+                }
+            }
+        };
 
-        for (int index=1; index<participants.size(); ++index) {
-            if (participants.get(index).getRecord().getScore() == participants.get(index-1).getRecord().getScore()) {
-                participants.get(index)
-                        .getRecord()
-                        .setRank(curr);
+        Collections.sort(this.participants, comparator);
+
+        int currRank = 1;
+        int tieNum = 1;
+
+        this.participants.get(0).setTotalRank(currRank);
+
+        for (int idx=1; idx<this.participants.size(); ++idx) {
+            if (comparator.compare(this.participants.get(idx), this.participants.get(idx-1)) == 0) {
+                this.participants.get(idx).setTotalRank(currRank);
+                tieNum++;
             } else {
-                curr = index + 1;
+                currRank += tieNum; tieNum = 1;
+                this.participants.get(idx).setTotalRank(currRank);
             }
         }
     }
+
+
 
     /**
-     * initiate matches
+     * update rank of each round
      */
-    public void createMatches() {
-        int numTeam = participants.size();
-        int[] idx = IntStream.range(0, numTeam).toArray();
+    public void updateRecordRank(int round) {
 
-        if (numTeam % 2 == 1) {
+        List<Record> records = this.participants.stream()
+                .map(participant -> (
+                    participant.getRecords().stream()
+                            .filter(record -> record.getRound() == round)
+                            .collect(Collectors.toList()).get(0)
+                )).collect(Collectors.toList());
 
-            for (int rotation=0; rotation<method.getRoundrobins(); ++rotation) {
-                for (int round=1; round<=numTeam; ++round) {
+        // sorting by score
+        records.sort(Comparator.comparing(Record::getScore).reversed());
 
-                    for (int i = 0; i < numTeam / 2; ++i) {
-                        Participant homeTeam = participants.get(idx[i]);
-                        Participant awayTeam = participants.get(idx[numTeam - 1 - i]);
+        // insert ranking
+        int currRank = 1;
+        int numTie = 1;
 
-                        Match match = Match.createMatch(null, rotation*numTeam+round, homeTeam, awayTeam);
+        records.get(0).setRank(currRank);
 
-                        homeTeam.getHomeMatches().add(match);
-                        awayTeam.getAwayMatches().add(match);
-
-                    }
-
-                    for (int i = 0; i < numTeam; ++i) {
-                        idx[i] = (idx[i] + 1) % numTeam;
-                    }
-                }
-            }
-
-
-        } else {
-            for (int rotation=0; rotation<method.getRoundrobins(); ++rotation) {
-                for (int round=1; round<=numTeam-1; ++round) {
-
-                    for (int i = 0; i < numTeam / 2; ++i) {
-                        Participant homeTeam = participants.get(idx[i]);
-                        Participant awayTeam = participants.get(idx[numTeam - 1 - i]);
-
-                        Match match = Match.createMatch(null, rotation*numTeam+round, homeTeam, awayTeam);
-
-                        homeTeam.getHomeMatches().add(match);
-                        awayTeam.getAwayMatches().add(match);
-
-                    }
-
-                    for (int i = 0; i < numTeam-1; ++i) {
-                        idx[i] = (idx[i] + 1) % (numTeam - 1);
-                    }
-                }
+        for (int i=1; i<records.size(); ++i) {
+            if (records.get(i-1).getScore() == records.get(i).getScore()) {
+                records.get(i).setScore(currRank);
+                numTie++;
+            } else {
+                currRank += numTie;
+                records.get(i).setRank(currRank);
+                numTie = 1;
             }
         }
     }
-
 }

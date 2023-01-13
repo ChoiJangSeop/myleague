@@ -1,6 +1,7 @@
 package jangseop.myleague.service;
 
 import jangseop.myleague.domain.League;
+import jangseop.myleague.domain.LeagueStatus;
 import jangseop.myleague.domain.Playoff;
 import jangseop.myleague.dto.LeagueDto;
 import jangseop.myleague.repository.LeagueRepository;
@@ -29,8 +30,8 @@ class LeagueServiceTest {
         LeagueDto dto = new LeagueDto(
                 1L,
                 "League",
-                "2022-01-01", "2022-12-31",
-                1, 1, Playoff.DOUBLE_ELIMINATION);
+                "2022-01-01", "2022-12-31", LeagueStatus.PROCEEDING,
+                1, 1, Playoff.FULL_LEAGUE);
 
         League league = leagueService.create(dto);
 
@@ -39,8 +40,8 @@ class LeagueServiceTest {
         LeagueDto replaceDto = new LeagueDto(
                 1L,
                 "League",
-                "2022-01-01", "2022-03-31",
-                2, 1, Playoff.DOUBLE_ELIMINATION);
+                "2022-01-01", "2022-03-31", LeagueStatus.PROCEEDING,
+                2, 1, Playoff.FULL_LEAGUE);
         leagueService.update(league.getId(), replaceDto);
         League findLeague = leagueRepository.findOne(league.getId());
 

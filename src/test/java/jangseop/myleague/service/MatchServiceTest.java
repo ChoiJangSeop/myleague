@@ -2,6 +2,8 @@ package jangseop.myleague.service;
 
 import com.fasterxml.jackson.databind.deser.std.StdKeyDeserializer;
 import jangseop.myleague.domain.*;
+import jangseop.myleague.domain.record.FullLeague;
+import jangseop.myleague.domain.record.Record;
 import jangseop.myleague.repository.MatchRepository;
 import jangseop.myleague.repository.TeamRepository;
 import org.assertj.core.api.Assertions;
@@ -20,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static jangseop.myleague.domain.Playoff.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,9 +71,11 @@ class MatchServiceTest {
         Participant lck_af = participantService.create(AF.getId(), LCK.getId());
         Participant lck_dk = participantService.create(DK.getId(), LCK.getId());
 
+        Record af_record = participantService.addRecord(lck_af.getId(), 1, FULL_LEAGUE);
+        Record dk_record = participantService.addRecord(lck_dk.getId(), 1, FULL_LEAGUE);
 
         // when
-        Match match = matchService.create(null, lck_af.getId(), lck_dk.getId());
+        Match match = matchService.create(1, null, af_record.getId(), dk_record.getId());
         Match findMatch = matchRepository.findOne(match.getId());
 
         // then
@@ -97,11 +102,14 @@ class MatchServiceTest {
         Participant lck_af = participantService.create(AF.getId(), LCK.getId());
         Participant lpl_af = participantService.create(AF.getId(), LPL.getId());
 
+        Record lck_af_record = participantService.addRecord(lck_af.getId(), 1, FULL_LEAGUE);
+        Record lpl_af_record = participantService.addRecord(lpl_af.getId(), 1, FULL_LEAGUE);
+
         // when
 
         // then
         assertThrows(IllegalStateException.class, () -> {
-            matchService.create(null, lck_af.getId(), lpl_af.getId());
+            matchService.create(1, null, lck_af_record.getId(), lpl_af_record.getId());
         });
     }
 
@@ -133,9 +141,12 @@ class MatchServiceTest {
         Participant af_lck = participantService.create(AF.getId(), LCK.getId());
         Participant rng_lpl = participantService.create(RNG.getId(), LPL.getId());
 
+        Record af_lck_record = participantService.addRecord(af_lck.getId(), 1, FULL_LEAGUE);
+        Record rng_lpl_record = participantService.addRecord(rng_lpl.getId(), 1, FULL_LEAGUE);
+
         // then
         assertThrows(IllegalStateException.class, () -> {
-            matchService.create(null, af_lck.getId(), rng_lpl.getId());
+            matchService.create(1, null, af_lck_record.getId(), rng_lpl_record.getId());
         });
     }
     
@@ -147,26 +158,35 @@ class MatchServiceTest {
 
         Team DK = Team.createTeam("DWG KIA", 15);
         Team AF = Team.createTeam("Afreeca Freecs", 16);
+        Team KT = Team.createTeam("KT Rolster", 20);
 
         em.persist(DK);
         em.persist(AF);
+        em.persist(KT);
 
         Participant af_lck = participantService.create(AF.getId(), LCK.getId());
         Participant dk_lck = participantService.create(DK.getId(), LCK.getId());
 
-        Match match = matchService.create(null, af_lck.getId(), dk_lck.getId());
+        Record af_lck_record = participantService.addRecord(af_lck.getId(), 1, FULL_LEAGUE);
+        Record dk_lck_record = participantService.addRecord(dk_lck.getId(), 1, FULL_LEAGUE);
 
+        Match match = matchService.create(1, null, af_lck_record.getId(), dk_lck_record.getId());
         // when
         match.matchTeams(0, 2);
         match.matchTeams(2, 1);
 
         // then
-        assertThat(af_lck.getRecord().getWin()).isEqualTo(1);
-        assertThat(dk_lck.getRecord().getLoss()).isEqualTo(1);
-        assertThat(af_lck.getRecord().getSetWin()).isEqualTo(2);
-        assertThat(af_lck.getRecord().getSetLoss()).isEqualTo(1);
-        assertThat(dk_lck.getRecord().getSetWin()).isEqualTo(1);
-        assertThat(dk_lck.getRecord().getSetLoss()).isEqualTo(2);
+        assertThat(af_lck_record.getWin()).isEqualTo(1);
+        assertThat(dk_lck_record.getLoss()).isEqualTo(1);
+        assertThat(af_lck_record.getSetWin()).isEqualTo(2);
+        assertThat(af_lck_record.getSetLoss()).isEqualTo(1);
+        assertThat(dk_lck_record.getSetWin()).isEqualTo(1);
+        assertThat(dk_lck_record.getSetLoss()).isEqualTo(2);
+
+        assertThat(af_lck_record.getRank()).isEqualTo(1);
+        assertThat(af_lck.getTotalRank()).isEqualTo(1);
+        assertThat(dk_lck_record.getRank()).isEqualTo(2);
+        assertThat(dk_lck.getTotalRank()).isEqualTo(2);
     }
 
     @Test
@@ -191,9 +211,15 @@ class MatchServiceTest {
         Participant af_lpl = participantService.create(AF.getId(), LPL.getId());
         Participant dk_lpl = participantService.create(DK.getId(), LPL.getId());
 
-        Match match1 = matchService.create(null, af_lck.getId(), dk_lck.getId());
-        Match match2 = matchService.create(null, af_lck.getId(), kt_lck.getId());
-        Match match3 = matchService.create(null, af_lpl.getId(), dk_lpl.getId());
+        Record af_lck_record = participantService.addRecord(af_lck.getId(), 1, FULL_LEAGUE);
+        Record dk_lck_record = participantService.addRecord(dk_lck.getId(), 1, FULL_LEAGUE);
+        Record kt_lck_record = participantService.addRecord(kt_lck.getId(), 1, FULL_LEAGUE);
+        Record af_lpl_record = participantService.addRecord(af_lpl.getId(), 1, FULL_LEAGUE);
+        Record dk_lpl_record = participantService.addRecord(dk_lpl.getId(), 1, FULL_LEAGUE);
+
+        Match match1 = matchService.create(1, null, af_lck_record.getId(), dk_lck_record.getId());
+        Match match2 = matchService.create(1, null, af_lck_record.getId(), kt_lck_record.getId());
+        Match match3 = matchService.create(1, null, af_lpl_record.getId(), dk_lpl_record.getId());
 
         // when
         List<Match> matchByDK = matchService.searchMatch(DK.getId(), null);
@@ -235,10 +261,13 @@ class MatchServiceTest {
         Participant af_lck = participantService.create(AF.getId(), LCK.getId());
         Participant dk_lck = participantService.create(DK.getId(), LCK.getId());
 
-        matchService.create(date1, af_lck.getId(), dk_lck.getId());
-        matchService.create(date3, af_lck.getId(), dk_lck.getId());
-        matchService.create(date2, af_lck.getId(), dk_lck.getId());
-        matchService.create(date4, af_lck.getId(), dk_lck.getId());
+        Record af_lck_record = participantService.addRecord(af_lck.getId(), 1, FULL_LEAGUE);
+        Record dk_lck_record = participantService.addRecord(dk_lck.getId(), 1, FULL_LEAGUE);
+
+        matchService.create(1, date1, af_lck_record.getId(), dk_lck_record.getId());
+        matchService.create(1, date3, af_lck_record.getId(), dk_lck_record.getId());
+        matchService.create(1, date2, af_lck_record.getId(), dk_lck_record.getId());
+        matchService.create(1, date4, af_lck_record.getId(), dk_lck_record.getId());
 
         // when
         List<Match> matchByLCK = matchService.searchMatch(null, LCK.getId());

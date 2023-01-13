@@ -1,10 +1,8 @@
 package jangseop.myleague.service;
 
 import jangseop.myleague.domain.*;
-import jangseop.myleague.repository.LeagueRepository;
-import jangseop.myleague.repository.MatchRepository;
-import jangseop.myleague.repository.ParticipantRepository;
-import jangseop.myleague.repository.TeamRepository;
+import jangseop.myleague.domain.record.Record;
+import jangseop.myleague.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,8 @@ public class MatchService {
     private final TeamRepository teamRepository;
     private final LeagueRepository leagueRepository;
 
+    private final RecordRepository recordRepository;
+
     /**
      * 경기 생성 및 저장
      */
@@ -30,11 +30,12 @@ public class MatchService {
     public Match create(int round, Date date, Long homeId, Long awayId) {
 
         // 엔티티 조회
-        Participant home = participantRepository.findOne(homeId);
-        Participant away = participantRepository.findOne(awayId);
+        Record home = recordRepository.findOne(homeId);
+        Record away = recordRepository.findOne(awayId);
 
         // 경기 생성 검증
-        validateCreateMatch(date, home, away);
+        validateParticipantCreateMatch(date, home.getParticipant(), away.getParticipant());
+        validateRecordCreateMatch(home, away);
 
         // 경기 생성
         Match match = Match.createMatch(date, round, home, away);
@@ -48,7 +49,9 @@ public class MatchService {
     /**
      * 경기 생성 검증
      */
-    public void validateCreateMatch(Date date, Participant home, Participant away) {
+
+    // 1. Participant validation
+    public void validateParticipantCreateMatch(Date date, Participant home, Participant away) {
 
 
         if (home.getTeam() == away.getTeam()) {
@@ -57,6 +60,14 @@ public class MatchService {
 
         if (home.getLeague() != away.getLeague()) {
             throw new IllegalStateException("경기에 참가하는 팀은 같은 대회에 소속되어 있어야 합니다");
+        }
+    }
+
+    // 2. Record validation
+    public void validateRecordCreateMatch(Record home, Record away) {
+        if (home.getRound() != away.getRound()) {
+            // TODO refector error message
+            throw new IllegalStateException("경기 기록이 서로 다른 라운드임");
         }
     }
 

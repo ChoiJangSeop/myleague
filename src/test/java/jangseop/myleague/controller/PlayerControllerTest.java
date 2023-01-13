@@ -53,8 +53,8 @@ class PlayerControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.playerDtoList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.playerDtoList[0].name", Matchers.is("kiin")));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].name", Matchers.is("kiin")));
     }
 
     @Test
@@ -164,22 +164,22 @@ class PlayerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("position", "TOP"))
                 .andDo(print())
-                .andExpect(jsonPath("$._embedded.playerDtoList", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/players/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("team", teamId1.toString()))
                 .andDo(print())
-                .andExpect(jsonPath("$._embedded.playerDtoList", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/players/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("position", "TOP")
-                        .param("teamId", teamId2.toString()))
+                        .param("team", teamId2.toString()))
                 .andDo(print())
-                .andExpect(jsonPath("$._embedded.playerDtoList", hasSize(1)));
+                .andExpect(jsonPath("$.content", hasSize(1)));
         // then
     }
 

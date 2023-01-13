@@ -2,6 +2,7 @@ package jangseop.myleague.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jangseop.myleague.domain.League;
+import jangseop.myleague.domain.LeagueStatus;
 import jangseop.myleague.domain.Playoff;
 import jangseop.myleague.dto.LeagueDto;
 import jangseop.myleague.repository.LeagueRepository;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static jangseop.myleague.domain.LeagueStatus.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,8 +52,8 @@ class LeagueControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
         // then
-                .andExpect(jsonPath("$._embedded.leagueDtoList", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.leagueDtoList[0].title", is("LCK")));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].title", is("LCK")));
     }
 
     @Test
@@ -74,7 +76,7 @@ class LeagueControllerTest {
     public void postOne() throws Exception {
         // given
         String dto = objectMapper.writeValueAsString(
-                new LeagueDto(1L, "LCK", "2022-10-31", "2022-11-01", 1, 1, Playoff.DOUBLE_ELIMINATION));
+                new LeagueDto(1L, "LCK", "2022-10-31", "2022-11-01", PROCEEDING, 1, 1, Playoff.DOUBLE_ELIMINATION));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/leagues")

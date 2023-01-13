@@ -2,11 +2,9 @@ package jangseop.myleague.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jangseop.myleague.domain.*;
+import jangseop.myleague.domain.record.Record;
 import jangseop.myleague.dto.MatchDto;
-import jangseop.myleague.repository.LeagueRepository;
-import jangseop.myleague.repository.MatchRepository;
-import jangseop.myleague.repository.ParticipantRepository;
-import jangseop.myleague.repository.TeamRepository;
+import jangseop.myleague.repository.*;
 import jangseop.myleague.service.MatchService;
 import jangseop.myleague.service.ParticipantService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +44,7 @@ class MatchControllerTest {
     @Autowired MatchService matchService;
     @Autowired TeamRepository teamRepository;
     @Autowired LeagueRepository leagueRepository;
+    @Autowired RecordRepository recordRepository;
     @Autowired ParticipantService participantService;
     @Autowired ParticipantRepository participantRepository;
 
@@ -53,7 +52,7 @@ class MatchControllerTest {
     public void getAll() throws Exception {
         // given
         Map<String,Long> db = initDB();
-        Match match = matchService.create(null, db.get("participantId1"), db.get("participantId2"));
+        Match match = matchService.create(1, null, db.get("recordId1"), db.get("recordId2"));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/matches")
@@ -61,15 +60,15 @@ class MatchControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.matchDtoList", hasSize(1)));
+                .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
     @Test
     public void getOne() throws Exception {
         // given
         Map<String, Long> db = initDB();
-        Long matchId1 = matchService.create(null, db.get("participantId1"), db.get("participantId2")).getId();
-        Long matchId2 = matchService.create(null, db.get("participantId2"), db.get("participantId3")).getId();
+        Long matchId1 = matchService.create(1, null, db.get("recordId1"), db.get("recordId2")).getId();
+        Long matchId2 = matchService.create(1, null, db.get("recordId2"), db.get("recordId3")).getId();
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/matches/"+matchId1.intValue())
@@ -77,14 +76,14 @@ class MatchControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.homeId", is(db.get("participantId1").intValue())));
+                .andExpect(jsonPath("$.homeId", is(db.get("recordId1").intValue())));
     }
 
     @Test
     public void postOne() throws Exception {
         // given
         Map<String, Long> db = initDB();
-        MatchDto dto = new MatchDto(1, null, db.get("participantId1"), db.get("participantId2"));
+        MatchDto dto = new MatchDto(1, null, db.get("recordId1"), db.get("recordId2"));
         String content = objectMapper.writeValueAsString(dto);
 
         // when
@@ -102,7 +101,7 @@ class MatchControllerTest {
     public void putPlayMatch() throws Exception {
         // given
         Map<String, Long> db = initDB();
-        Match match = matchService.create(null, db.get("participantId1"), db.get("participantId2"));
+        Match match = matchService.create(1, null, db.get("recordId1"), db.get("recordId2"));
         MatchDto dto = new MatchDto();
         dto.setHomeScore(1); dto.setAwayScore(2);
         String content = objectMapper.writeValueAsString(dto);
@@ -119,9 +118,9 @@ class MatchControllerTest {
         assertThat(matchRepository.findOne(match.getId()).getHomeScore()).isEqualTo(dto.getHomeScore());
         assertThat(matchRepository.findOne(match.getId()).getAwayScore()).isEqualTo(dto.getAwayScore());
 
-        assertThat(participantRepository.findOne(db.get("participantId1")).getRecord().getLoss())
+        assertThat(recordRepository.findOne(db.get("recordId1")).getLoss())
                 .isEqualTo(1);
-        assertThat(participantRepository.findOne(db.get("participantId2")).getRecord().getWin())
+        assertThat(recordRepository.findOne(db.get("recordId2")).getWin())
                 .isEqualTo(1);
 
         // etc
@@ -137,9 +136,9 @@ class MatchControllerTest {
     public void getSearch() throws Exception {
         // given
         Map<String, Long> db = initDB();
-        Match AFvsGEN = matchService.create(null, db.get("participantId1"), db.get("participantId2"));
-        Match KTvsAF = matchService.create(null, db.get("participantId3"), db.get("participantId1"));
-        Match AFvsGEN_lpl = matchService.create(null, db.get("participantId4"), db.get("participantId5"));
+        Match AFvsGEN = matchService.create(1, null, db.get("recordId1"), db.get("recordId2"));
+        Match KTvsAF = matchService.create(1, null, db.get("recordId3"), db.get("recordId1"));
+        Match AFvsGEN_lpl = matchService.create(1, null, db.get("recordId4"), db.get("recordId5"));
 
         // case #1 : search by team
         // when
@@ -149,7 +148,7 @@ class MatchControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.matchDtoList", hasSize(3)));
+                .andExpect(jsonPath("$.content", hasSize(3)));
 
         // case #2 : search by league
         // when
@@ -159,7 +158,7 @@ class MatchControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.matchDtoList", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
 
         // case #3 : search by team and league
         // when
@@ -170,15 +169,15 @@ class MatchControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.matchDtoList", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
     }
 
     private Map<String ,Long> initDB() {
         Long leagueId = leagueRepository.save(League.createLeague(
-                "LCK", null, null, 1, 1, Playoff.SINGLE_ELIMINATION
+                "LCK", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION
         ));
         Long leagueId2 = leagueRepository.save(League.createLeague(
-                "LPL", null, null, 1, 1, Playoff.SINGLE_ELIMINATION
+                "LPL", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION
         ));
         Long teamId1 = teamRepository.save(Team.createTeam("Afreeca", 11));
         Long teamId2 = teamRepository.save(Team.createTeam("Gen.G", 12));
@@ -188,24 +187,31 @@ class MatchControllerTest {
                 teamRepository.findOne(teamId1),
                 leagueRepository.findOne(leagueId)
         ));
+        Long recordId1 = participantService.addRecord(participantId1, 1, Playoff.FULL_LEAGUE).getId();
+
         Long participantId2 = participantRepository.save(Participant.createParticipant(
                 teamRepository.findOne(teamId2),
                 leagueRepository.findOne(leagueId)
         ));
+        Long recordId2 = participantService.addRecord(participantId2, 1, Playoff.FULL_LEAGUE).getId();
+
         Long participantId3 = participantRepository.save(Participant.createParticipant(
                 teamRepository.findOne(teamId3),
                 leagueRepository.findOne(leagueId)
         ));
+        Long recordId3 = participantService.addRecord(participantId3, 1, Playoff.FULL_LEAGUE).getId();
 
         Long participantId4 = participantRepository.save(Participant.createParticipant(
                 teamRepository.findOne(teamId1),
                 leagueRepository.findOne(leagueId2)
         ));
+        Long recordId4 = participantService.addRecord(participantId4, 1, Playoff.FULL_LEAGUE).getId();
 
         Long participantId5 = participantRepository.save(Participant.createParticipant(
                 teamRepository.findOne(teamId2),
                 leagueRepository.findOne(leagueId2)
         ));
+        Long recordId5 = participantService.addRecord(participantId5, 1, Playoff.FULL_LEAGUE).getId();
 
         HashMap<String, Long> ret = new HashMap<>();
         ret.put("leagueId", leagueId);
@@ -217,6 +223,11 @@ class MatchControllerTest {
         ret.put("participantId3", participantId3);
         ret.put("participantId4", participantId4);
         ret.put("participantId5", participantId5);
+        ret.put("recordId1", recordId1);
+        ret.put("recordId2", recordId2);
+        ret.put("recordId3", recordId3);
+        ret.put("recordId4", recordId4);
+        ret.put("recordId5", recordId5);
         return ret;
     }
 

@@ -1,18 +1,23 @@
 package jangseop.myleague.domain;
 
+import jangseop.myleague.domain.record.FullLeague;
+import jangseop.myleague.domain.record.Record;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.mapping.Collection;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static jangseop.myleague.domain.Playoff.*;
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
 @Getter @Setter
-public class Participant implements Comparable<Participant> {
+public class Participant {
 
     @Id
     @GeneratedValue
@@ -27,24 +32,11 @@ public class Participant implements Comparable<Participant> {
     @JoinColumn(name = "LEAGUE_ID")
     private League league;
 
-    @OneToMany(mappedBy = "home", fetch = LAZY, cascade = ALL)
-    private List<Match> homeMatches = new ArrayList<>();
 
-    @OneToMany(mappedBy = "away", fetch = LAZY, cascade = ALL)
-    private List<Match> awayMatches = new ArrayList<>();
+    @OneToMany(mappedBy = "participant", fetch = LAZY, cascade = ALL)
+    private List<Record> records = new ArrayList<>();
 
-    @OneToOne(fetch = LAZY, cascade = ALL)
-    @JoinColumn(name = "RECORD_ID")
-    private Record record;
-
-
-    //== 정렬 연산을 위한 Comparable interface 구현 ==//
-
-    @Override
-    public int compareTo(Participant o) {
-        return o.record.getScore() - this.record.getScore();
-    }
-
+    private int totalRank;
 
     //== 생성 메서드 ==//
 
@@ -57,30 +49,28 @@ public class Participant implements Comparable<Participant> {
         participant.league = league;
         league.getParticipants().add(participant);
 
-        participant.record = new Record();
-
 
         return participant;
     }
 
-    //== 비즈니스 로직 ==//
-
-    /**
-     * add match result
-     */
-    public void addMatchResult(int myScore, int otherScore) {
-        record.addMatchResult(myScore, otherScore);
-        record.updateScore();
-        league.updateRanking();
+    public void updateRanking(int round) {
+        this.league.updateRecordRank(round);
+        this.league.updateRanking();
     }
 
-    /**
-     * remove match result
-     */
-    public void removeMatchResult(int myScore, int otherScore) {
-        record.removeMatchResult(myScore, otherScore);
-        record.updateScore();
-        league.updateRanking();
+    //== 비즈니스 로직 ==//
+    public void addRecord(Record record) {
+        if (record.getParticipant() != null) {
+            record.getParticipant().removeRecord(record);
+        }
+
+        this.records.add(record);
+        record.setParticipant(this);
+    }
+
+    public void removeRecord(Record record) {
+        this.records.remove(record);
+        record.setParticipant(null);
     }
 
 

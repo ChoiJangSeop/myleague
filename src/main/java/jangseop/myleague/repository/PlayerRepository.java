@@ -72,4 +72,8 @@ public class PlayerRepository {
                 .where(builder)
                 .fetch();
     }
+
+    public void delete(Player player) {
+        em.remove(player);
+    }
 }

@@ -130,4 +130,14 @@ public class PlayerController {
         return CollectionModel.of(players, linkTo(methodOn(PlayerController.class).search(param)).withSelfRel());
     }
 
+    /**
+     * delete player
+     */
+    @ApiOperation(value = "선수 삭제", notes ="입력 받은 id에 해당하는 선수를 삭제합니다.")
+    @DeleteMapping("/players/{id}")
+    public void delete(
+            @ApiParam(value = "삭제할 선수의 아이디", required = true) @PathVariable Long id) {
+        playerService.deletePlayer(id);
+    }
+
 }

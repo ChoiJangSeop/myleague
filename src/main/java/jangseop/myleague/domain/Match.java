@@ -1,5 +1,6 @@
 package jangseop.myleague.domain;
 
+import jangseop.myleague.domain.record.Record;
 import lombok.Getter;
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -18,12 +19,12 @@ public class Match implements Comparable<Match> {
     private Date matchDate;
 
     @ManyToOne
-    @JoinColumn(name = "HOME_PARTICIPANT_ID")
-    private Participant home;
+    @JoinColumn(name = "HOME_RECORD_ID")
+    private Record home;
 
     @ManyToOne
-    @JoinColumn(name = "AWAY_PARTICIPANT_ID")
-    private Participant away;
+    @JoinColumn(name = "AWAY_RECORD_ID")
+    private Record away;
 
     private int homeScore = -1;
     private int awayScore = -1;
@@ -33,7 +34,7 @@ public class Match implements Comparable<Match> {
     /**
      * create Match
      */
-    public static Match createMatch(Date date, int round, Participant home, Participant away) {
+    public static Match createMatch(Date date, int round, Record home, Record away) {
         Match match = new Match();
 
         match.matchDate = date;

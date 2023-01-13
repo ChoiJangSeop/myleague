@@ -56,8 +56,8 @@ class TeamControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.teamDtoList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.teamDtoList[1].name", is("Gen.G")));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[1].name", is("Gen.G")));
     }
 
     @Test

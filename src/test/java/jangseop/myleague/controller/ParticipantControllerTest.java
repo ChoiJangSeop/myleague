@@ -2,8 +2,9 @@ package jangseop.myleague.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jangseop.myleague.domain.*;
+import jangseop.myleague.domain.record.FullLeague;
+import jangseop.myleague.domain.record.Record;
 import jangseop.myleague.dto.ParticipantDto;
-import jangseop.myleague.dto.TeamDto;
 import jangseop.myleague.repository.LeagueRepository;
 import jangseop.myleague.repository.ParticipantRepository;
 import jangseop.myleague.repository.TeamRepository;
@@ -21,9 +22,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static jangseop.myleague.domain.Playoff.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,7 +49,7 @@ class ParticipantControllerTest {
         // given
         Long teamId = teamRepository.save(Team.createTeam("Afreeca", 10));
         Long leagueId = leagueRepository.save(League.createLeague(
-                "LCK", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION));
+                "LCK", null, null, 1, 1, DOUBLE_ELIMINATION));
         participantRepository.save(Participant.createParticipant(
                 teamRepository.findOne(teamId),
                 leagueRepository.findOne(leagueId)));
@@ -59,7 +60,7 @@ class ParticipantControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.participantDtoList", hasSize(1)));
+                .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
     @Test
@@ -67,7 +68,7 @@ class ParticipantControllerTest {
         // given
         Long teamId = teamRepository.save(Team.createTeam("Afreeca", 10));
         Long leagueId = leagueRepository.save(League.createLeague(
-                "LCK", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION));
+                "LCK", null, null, 1, 1, DOUBLE_ELIMINATION));
         Long participantId = participantRepository.save(Participant.createParticipant(
                 teamRepository.findOne(teamId),
                 leagueRepository.findOne(leagueId)));
@@ -87,8 +88,8 @@ class ParticipantControllerTest {
         // given
         Long teamId = teamRepository.save(Team.createTeam("Afreeca", 10));
         Long leagueId = leagueRepository.save(League.createLeague(
-                "LCK", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION));
-        String dto = objectMapper.writeValueAsString(new ParticipantDto(teamId, leagueId, new Record()));
+                "LCK", null, null, 1, 1, KNOCKOUT));
+        String dto = objectMapper.writeValueAsString(new ParticipantDto(teamId, leagueId, 1));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/participants")
@@ -107,9 +108,9 @@ class ParticipantControllerTest {
         Long teamId1 = teamRepository.save(Team.createTeam("Afreeca", 15));
         Long teamId2 = teamRepository.save(Team.createTeam("Gen.G", 15));
         Long leagueId1 = leagueRepository.save(League.createLeague(
-                "LCK", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION));
+                "LCK", null, null, 1, 1, DOUBLE_ELIMINATION));
         Long leagueId2 = leagueRepository.save(League.createLeague(
-                "LPL", null, null, 1, 1, Playoff.DOUBLE_ELIMINATION));
+                "LPL", null, null, 1, 1, DOUBLE_ELIMINATION));
         Participant p1 = participantService.create(teamId1, leagueId1);
         Participant p2 = participantService.create(teamId1, leagueId2);
         Participant p3 = participantService.create(teamId2, leagueId1);
@@ -123,9 +124,9 @@ class ParticipantControllerTest {
                 .andDo(print())
         // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.participantDtoList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.participantDtoList[0].leagueId", is(leagueId1.intValue())))
-                .andExpect(jsonPath("$._embedded.participantDtoList[1].leagueId", is(leagueId1.intValue())));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].leagueId", is(leagueId1.intValue())))
+                .andExpect(jsonPath("$.content[1].leagueId", is(leagueId1.intValue())));
 
         // case #2
         // when
@@ -134,9 +135,9 @@ class ParticipantControllerTest {
                         .param("team", teamId1.toString()))
                 .andDo(print())
         // then
-                .andExpect(jsonPath("$._embedded.participantDtoList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.participantDtoList[0].teamId", is(teamId1.intValue())))
-                .andExpect(jsonPath("$._embedded.participantDtoList[1].teamId", is(teamId1.intValue())));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].teamId", is(teamId1.intValue())))
+                .andExpect(jsonPath("$.content[1].teamId", is(teamId1.intValue())));
 
         // case #3
         // when
@@ -146,8 +147,28 @@ class ParticipantControllerTest {
                         .param("league", leagueId1.toString()))
                 .andDo(print())
                 // then
-                .andExpect(jsonPath("$._embedded.participantDtoList", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.participantDtoList[0].teamId", is(teamId1.intValue())))
-                .andExpect(jsonPath("$._embedded.participantDtoList[0].leagueId", is(leagueId1.intValue())));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].teamId", is(teamId1.intValue())))
+                .andExpect(jsonPath("$.content[0].leagueId", is(leagueId1.intValue())));
+    }
+
+    @Test
+    public void getOneRecord() throws Exception {
+        // given
+        Long teamId = teamRepository.save(Team.createTeam("Afreeca", 10));
+        Long leagueId = leagueRepository.save(League.createLeague(
+                "LCK", null, null, 1, 1, DOUBLE_ELIMINATION));
+        Participant participant = Participant.createParticipant(teamRepository.findOne(teamId), leagueRepository.findOne(leagueId));
+        Long participantId = participantRepository.save(participant);
+
+        Record record = participantService.addRecord(participantId, 1, DOUBLE_ELIMINATION);
+
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.get("/participants/" + participantId.intValue() + "/records/" + record.getRound())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+        // then
+                .andExpect(jsonPath("$.participantId", is(participantId.intValue())));
     }
 }

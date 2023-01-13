@@ -1,6 +1,6 @@
 package jangseop.myleague.dto;
 
-import jangseop.myleague.domain.Record;
+import jangseop.myleague.domain.record.Record;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -15,40 +15,13 @@ public class ParticipantDto {
     private Long teamId;
     private Long leagueId;
 
-    private int win;
-    private int draw;
-    private int loss;
-    private int setWin;
-    private int setLoss;
-    private int score;
-    private int rank;
+    private int totalRank;
 
-    public ParticipantDto(Long id, Long teamId, Long leagueId, Record record) {
+    public ParticipantDto(Long teamId, Long leagueId, int totalRank) {
         this.id = id;
         this.teamId = teamId;
         this.leagueId = leagueId;
-
-        this.win = record.getWin();
-        this.loss = record.getLoss();
-        this.draw = record.getDraw();
-        this.setWin = record.getSetWin();
-        this.setLoss = record.getSetLoss();
-        this.score = record.getScore();
-        this.rank = record.getRank();
-    }
-
-    public ParticipantDto(Long teamId, Long leagueId, Record record) {
-        this.id = id;
-        this.teamId = teamId;
-        this.leagueId = leagueId;
-
-        this.win = record.getWin();
-        this.loss = record.getLoss();
-        this.draw = record.getDraw();
-        this.setWin = record.getSetWin();
-        this.setLoss = record.getSetLoss();
-        this.score = record.getScore();
-        this.rank = record.getRank();
+        this.totalRank = totalRank;
     }
 
 

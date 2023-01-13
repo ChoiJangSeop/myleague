@@ -1,17 +1,17 @@
 package jangseop.myleague.service;
 
-import jangseop.myleague.domain.League;
-import jangseop.myleague.domain.Participant;
-import jangseop.myleague.domain.ParticipantSearch;
-import jangseop.myleague.domain.Team;
+import jangseop.myleague.domain.*;
+import jangseop.myleague.domain.record.Record;
 import jangseop.myleague.repository.LeagueRepository;
 import jangseop.myleague.repository.ParticipantRepository;
+import jangseop.myleague.repository.RecordRepository;
 import jangseop.myleague.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +23,7 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final TeamRepository teamRepository;
     private final LeagueRepository leagueRepository;
+    private final RecordRepository recordRepository;
 
     /**
      * 참가 도메인 생성 및 저장
@@ -89,4 +90,19 @@ public class ParticipantService {
         Participant participant = participantRepository.findOne(id);
         participantRepository.delete(participant);
     }
+
+    /**
+     * 새로운 라운드(기록) 추가
+     */
+    @Transactional
+    public Record addRecord(Long id, int round, Playoff type) {
+        Record record = Record.createRecord(round, type);
+        recordRepository.save(record);
+
+        Participant findParticipant = participantRepository.findOne(id);
+        findParticipant.addRecord(record);
+
+        return record;
+    }
+
 }

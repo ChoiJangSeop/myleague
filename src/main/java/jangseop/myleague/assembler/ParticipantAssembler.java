@@ -20,7 +20,7 @@ public class ParticipantAssembler implements RepresentationModelAssembler<Partic
                 participant.getId(),
                 participant.getTeam().getId(),
                 participant.getLeague().getId(),
-                participant.getRecord());
+                participant.getTotalRank());
 
         return EntityModel.of(participantDto,
                 linkTo(methodOn(ParticipantController.class).one(participant.getId())).withSelfRel(),

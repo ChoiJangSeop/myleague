@@ -105,8 +105,4 @@ public class LeagueService {
         leagueRepository.delete(findLeague);
     }
 
-    public void registerMatches() {
-
-    }
-
 }

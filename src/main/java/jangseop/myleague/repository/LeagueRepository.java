@@ -1,7 +1,13 @@
 package jangseop.myleague.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jangseop.myleague.domain.League;
+import jangseop.myleague.domain.Player;
+import jangseop.myleague.domain.QParticipant;
 import jangseop.myleague.domain.Team;
+import jangseop.myleague.domain.record.QRecord;
+import jangseop.myleague.domain.record.Record;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

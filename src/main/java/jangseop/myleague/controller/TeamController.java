@@ -5,8 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import jangseop.myleague.assembler.TeamAssembler;
-import jangseop.myleague.domain.Participant;
-import jangseop.myleague.domain.Record;
 import jangseop.myleague.domain.Team;
 import jangseop.myleague.dto.TeamDto;
 import jangseop.myleague.exception.TeamNotFoundException;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;

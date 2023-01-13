@@ -98,4 +98,13 @@ public class PlayerService {
 
         return playerRepository.findAll(new PlayerSearch(name, teamId, position));
     }
+
+    /**
+     * 선수 삭제
+     */
+    @Transactional
+    public void deletePlayer(Long playerId) {
+        Player findPlayer = playerRepository.findOne(playerId);
+        playerRepository.delete(findPlayer);
+    }
 }
