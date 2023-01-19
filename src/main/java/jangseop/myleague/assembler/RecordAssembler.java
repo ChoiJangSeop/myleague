@@ -31,6 +31,8 @@ public class RecordAssembler implements RepresentationModelAssembler<Record, Ent
 
         return EntityModel.of(recordDto,
                 linkTo(methodOn(ParticipantController.class).oneRecord(record.getParticipant().getId(), record.getRound())).withSelfRel(),
-                linkTo(methodOn(ParticipantController.class).allRecords(record.getParticipant().getId())).withRel("records"));
+                linkTo(methodOn(ParticipantController.class).allRecords(record.getParticipant().getId())).withRel("records"),
+                linkTo(methodOn(ParticipantController.class).one(record.getParticipant().getId())).withRel("particiapnt"),
+                linkTo(methodOn(ParticipantController.class).roundAllMatches(record.getParticipant().getId(), record.getRound())).withRel("matches"));
     }
 }

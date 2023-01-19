@@ -45,7 +45,7 @@ public class SwaggerConfiguration {
                 .title("My-League API Documentation")
                 .description("스포츠리그 관련 앱 개발시 사용되는 서버 연동 API 문서입니다")
                 .license("jangseop").licenseUrl("https://github.com/ChoiJangSeop")
-                .version("1.0.0")
+                .version("1.1.0")
                 .build();
     }
 

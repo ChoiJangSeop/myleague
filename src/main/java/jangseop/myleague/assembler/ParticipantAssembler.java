@@ -1,6 +1,7 @@
 package jangseop.myleague.assembler;
 
 import jangseop.myleague.controller.ParticipantController;
+import jangseop.myleague.controller.TeamController;
 import jangseop.myleague.domain.Participant;
 import jangseop.myleague.dto.ParticipantDto;
 import org.springframework.hateoas.EntityModel;
@@ -24,7 +25,9 @@ public class ParticipantAssembler implements RepresentationModelAssembler<Partic
 
         return EntityModel.of(participantDto,
                 linkTo(methodOn(ParticipantController.class).one(participant.getId())).withSelfRel(),
-                linkTo(methodOn(ParticipantController.class).all()).withRel("participants"));
+                linkTo(methodOn(ParticipantController.class).all()).withRel("participants"),
+                linkTo(methodOn(ParticipantController.class).allRecords(participant.getId())).withRel("records"),
+                linkTo(methodOn(TeamController.class).one(participant.getTeam().getId())).withRel("team"));
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -103,6 +104,14 @@ public class ParticipantService {
         findParticipant.addRecord(record);
 
         return record;
+    }
+
+    /**
+     * 특정 라운드의 경기 읽기
+     */
+    public List<Match> getRoundMatches(Long id, int round) {
+        Participant findParticipant = participantRepository.findOne(id);
+        return findParticipant.getRoundMatches(round);
     }
 
 }

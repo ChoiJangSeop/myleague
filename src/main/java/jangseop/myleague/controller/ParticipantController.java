@@ -3,12 +3,15 @@ package jangseop.myleague.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import jangseop.myleague.assembler.MatchAssembler;
 import jangseop.myleague.assembler.ParticipantAssembler;
 import jangseop.myleague.assembler.RecordAssembler;
+import jangseop.myleague.domain.Match;
 import jangseop.myleague.domain.Participant;
 import jangseop.myleague.domain.ParticipantSearch;
 import jangseop.myleague.domain.Playoff;
 import jangseop.myleague.domain.record.Record;
+import jangseop.myleague.dto.MatchDto;
 import jangseop.myleague.dto.ParticipantDto;
 import jangseop.myleague.dto.RecordDto;
 import jangseop.myleague.repository.ParticipantRepository;
@@ -35,6 +38,7 @@ public class ParticipantController {
     private final ParticipantService participantService;
     private final ParticipantAssembler participantAssembler;
     private final RecordAssembler recordAssembler;
+    private final MatchAssembler matchAssembler;
 
     @ApiOperation(value = "참가팀 전제 조회", notes = "데이터베이스에 저장된 참가팀을 모두 조회합니다.")
     @GetMapping("/participants")
@@ -104,6 +108,17 @@ public class ParticipantController {
         Record record = participantService.addRecord(id, dto.getRound(), dto.getType());
 
         return recordAssembler.toModel(record);
+    }
+
+    @ApiOperation(value = "특정 라운드 모든 경기 검색", notes="입력된 라운드의 모든 경기를 출력합니다")
+    @GetMapping("/participants/{id}/records/{round}/matches")
+    public CollectionModel<EntityModel<MatchDto>> roundAllMatches(
+            @ApiParam(value = "참가팀의 아이디", required = true) @PathVariable Long id,
+            @ApiParam(value = "라운드", required = true) @PathVariable int round) {
+        List<EntityModel<MatchDto>> matches = participantService.getRoundMatches(id, round).stream()
+                .map(matchAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(matches, linkTo(methodOn(ParticipantController.class).roundAllMatches(id, round)).withSelfRel());
     }
 
     @ApiOperation(value = "참가팀 검색", notes = "팀/리그 정보를 입력하여 참가팀을 검색합니다.")

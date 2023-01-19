@@ -77,6 +77,25 @@ public abstract class Record {
     //== 비즈니스 메서드 ==//
 
     /**
+     * 모든 경기 출력
+     */
+    public List<Match> getAllMatches() {
+        List<Match> ret = new ArrayList<>();
+        ret.addAll(this.homeMatches);
+        ret.addAll(this.awayMatches);
+
+        return ret;
+    }
+
+    public List<Match> getHomeMatches() {
+        return this.homeMatches;
+    }
+
+    public List<Match> getAwayMatches() {
+        return this.awayMatches;
+    }
+
+    /**
      * 경기 취소로 전적 초기화
      */
     abstract public void removeMatchResult(int matchSetWin, int matchSetLoss);
