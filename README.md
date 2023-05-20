@@ -1,5 +1,7 @@
 # MY LEAGUE
 
+API 개발 과정 : [ChoiJangSeop의 보관함](https://ohreallystore.tistory.com/category/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%9D%B4%EC%95%BC%EA%B8%B0/MyLeague%20API)
+
 ### Index
 
 1. Intro
